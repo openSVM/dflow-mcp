@@ -5,22 +5,15 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Function directory
 [functions]
   directory = "netlify/functions"
 
-# Route MCP API requests
 [[redirects]]
   from = "/api/mcp"
   to = "/.netlify/functions/mcp"
   status = 200
 
-# Route health check requests
 [[redirects]]
   from = "/api/health"
   to = "/.netlify/functions/health"
   status = 200
-
-# Function directory
-[functions]
-  directory = "netlify/functions"

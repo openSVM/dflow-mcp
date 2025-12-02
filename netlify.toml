@@ -1,19 +1,35 @@
 [build]
-  command = "echo 'Static site ready'"
-  publish = "."
+command = "npm install"
 
-[build.environment]
-  NODE_VERSION = "20"
+[[redirects]]
+  from = "/mcp/v2/bootstrap"
+  to = "/.netlify/functions/mcp-v2-bootstrap"
+  status = 200
 
-[functions]
-  directory = "netlify/functions"
+[[redirects]]
+  from = "/mcp/v2/connect"
+  to = "/.netlify/functions/mcp-v2-bootstrap"
+  status = 200
+
+[[redirects]]
+  from = "/mcp/v2/tools/list"
+  to = "/.netlify/functions/mcp-v2-bootstrap"
+  status = 200
+
+[[redirects]]
+  from = "/mcp/v2/tools/call"
+  to = "/.netlify/functions/mcp-v2-bootstrap"
+  status = 200
+
+[[redirects]]
+  from = "/mcp/v2/*"
+  to = "/.netlify/functions/mcp-v2-bootstrap"
+  status = 200
 
 [[redirects]]
   from = "/api/mcp"
   to = "/.netlify/functions/mcp"
   status = 200
 
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/health"
-  status = 200
+[functions]
+  directory = "functions"

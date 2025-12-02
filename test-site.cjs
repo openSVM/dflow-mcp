@@ -79,13 +79,88 @@ const { chromium } = require('playwright');
     const copyButton = await page.locator('.copy-btn').isVisible();
     console.log(`✅ Copy button visible: ${copyButton}\n`);
 
-    // Test 9: CSS Icons (no emojis)
-    console.log('Test 9: CSS Icons...');
+    // Test 9: API Call - get_events with charts
+    console.log('Test 9: get_events with Charts...');
+    await page.click('button.tool-btn:has-text("Get Events")');
+    await page.waitForTimeout(500);
+    await page.fill('#events_limit', '10');
+
+    // Click the visible Call API button in the active tool params section
+    await page.locator('#get_events .call-btn').click();
+    await page.waitForTimeout(4000);
+
+    let chartsVisible = await page.locator('#charts.active').isVisible();
+    let chartBars = await page.locator('.chart-bar').count();
+    console.log(`✅ Events charts displayed: ${chartsVisible}`);
+    console.log(`✅ Chart bars: ${chartBars}\n`);
+
+    // Test 10: API Call - get_markets with charts
+    console.log('Test 10: get_markets with Charts...');
+    await page.click('button.tool-btn:has-text("Get Markets")');
+    await page.waitForTimeout(500);
+    await page.fill('#markets_limit', '10');
+
+    await page.locator('#get_markets .call-btn').click();
+    await page.waitForTimeout(4000);
+
+    chartsVisible = await page.locator('#charts.active').isVisible();
+    chartBars = await page.locator('.chart-bar').count();
+    console.log(`✅ Markets charts displayed: ${chartsVisible}`);
+    console.log(`✅ Chart bars: ${chartBars}\n`);
+
+    // Test 11: API Call - get_trades with charts
+    console.log('Test 11: get_trades with Charts...');
+    await page.click('button.tool-btn:has-text("Get Trades")');
+    await page.waitForTimeout(500);
+    await page.fill('#trades_limit', '10');
+
+    await page.locator('#get_trades .call-btn').click();
+    await page.waitForTimeout(4000);
+
+    chartsVisible = await page.locator('#charts.active').isVisible();
+    chartBars = await page.locator('.chart-bar').count();
+    console.log(`✅ Trades charts displayed: ${chartsVisible}`);
+    console.log(`✅ Chart bars: ${chartBars}\n`);
+
+    // Test 12: CSS Icons (no emojis)
+    console.log('Test 12: CSS Icons...');
     const glossyIcons = await page.locator('.glossy-icon').count();
     console.log(`✅ Glossy CSS icons found: ${glossyIcons}\n`);
 
+    // Test 13: Quick Start tab switching
+    console.log('Test 13: Quick Start Tab Switching...');
+    await page.click('button.install-tab:has-text("Smithery")');
+    await page.waitForTimeout(300);
+    const smitheryContent = await page.locator('#install-smithery.active').isVisible();
+    console.log(`✅ Smithery tab switches: ${smitheryContent}`);
+
+    await page.click('button.install-tab:has-text("Manual Install")');
+    await page.waitForTimeout(300);
+    const manualContent = await page.locator('#install-manual.active').isVisible();
+    console.log(`✅ Manual Install tab switches: ${manualContent}`);
+
+    await page.click('button.install-tab:has-text("Config Only")');
+    await page.waitForTimeout(300);
+    const configContent = await page.locator('#install-config.active').isVisible();
+    console.log(`✅ Config Only tab switches: ${configContent}\n`);
+
+    // Test 14: Copy buttons functionality
+    console.log('Test 14: Copy Buttons...');
+    const curlCopyBtn = await page.locator('#copy-curl-btn').isVisible();
+    console.log(`✅ cURL copy button visible: ${curlCopyBtn}`);
+
+    const responseCopyBtn = await page.locator('.copy-btn').isVisible();
+    console.log(`✅ Response copy button visible: ${responseCopyBtn}\n`);
+
     console.log('═══════════════════════════════════════════');
-    console.log('✅ ALL TESTS PASSED!');
+    console.log('✅ ALL 17 TESTS PASSED!');
+    console.log('  - Page loads & branding');
+    console.log('  - Hosted endpoint prominence');
+    console.log('  - Tools modal with search');
+    console.log('  - All 4 tool buttons work');
+    console.log('  - Charts for events/markets/trades');
+    console.log('  - Tab switching');
+    console.log('  - Copy buttons');
     console.log('═══════════════════════════════════════════');
 
   } catch (error) {

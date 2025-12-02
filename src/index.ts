@@ -93,6 +93,8 @@ const server = new Server(
   {
     capabilities: {
       tools: {},
+      prompts: {},
+      resources: {},
     },
   }
 );
@@ -698,6 +700,165 @@ const TOOLS: Tool[] = [
 // Handle list tools request
 server.setRequestHandler(ListToolsRequestSchema, async () => {
   return { tools: TOOLS };
+});
+
+// Handle list prompts request
+server.setRequestHandler({ method: 'prompts/list' } as any, async () => {
+  return {
+    prompts: [
+      {
+        name: 'analyze_market_trends',
+        description: 'Analyze prediction market trends and provide insights on volume, liquidity, and price movements',
+        arguments: [
+          {
+            name: 'market_filter',
+            description: 'Filter markets by category (e.g., politics, sports, crypto)',
+            required: false,
+          },
+          {
+            name: 'time_range',
+            description: 'Time range for analysis (e.g., 24h, 7d, 30d)',
+            required: false,
+          },
+        ],
+      },
+      {
+        name: 'compare_events',
+        description: 'Compare multiple prediction market events side-by-side',
+        arguments: [
+          {
+            name: 'event_ids',
+            description: 'Comma-separated list of event tickers to compare',
+            required: true,
+          },
+        ],
+      },
+    ],
+  };
+});
+
+// Handle get prompt request
+server.setRequestHandler({ method: 'prompts/get' } as any, async (request: any) => {
+  const { name, arguments: args } = request.params;
+
+  if (name === 'analyze_market_trends') {
+    const filter = args?.market_filter || 'all markets';
+    const timeRange = args?.time_range || '24h';
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Analyze prediction market trends for ${filter} over the past ${timeRange}. Use get_events and get_markets tools to gather data, then provide insights on volume trends, liquidity patterns, and notable price movements.`,
+          },
+        },
+      ],
+    };
+  }
+
+  if (name === 'compare_events') {
+    const eventIds = args?.event_ids || '';
+    return {
+      messages: [
+        {
+          role: 'user',
+          content: {
+            type: 'text',
+            text: `Compare the following prediction market events: ${eventIds}. Use get_event tool for each event and provide a side-by-side comparison of volume, liquidity, markets, and recent activity.`,
+          },
+        },
+      ],
+    };
+  }
+
+  throw new McpError(ErrorCode.InvalidRequest, `Unknown prompt: ${name}`);
+});
+
+// Handle list resources request
+server.setRequestHandler({ method: 'resources/list' } as any, async () => {
+  return {
+    resources: [
+      {
+        uri: 'dflow://api/events',
+        name: 'Prediction Market Events',
+        description: 'Real-time feed of all prediction market events',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'dflow://api/markets',
+        name: 'Active Markets',
+        description: 'Currently active prediction markets with live data',
+        mimeType: 'application/json',
+      },
+      {
+        uri: 'dflow://api/docs',
+        name: 'API Documentation',
+        description: 'Complete API documentation and usage examples',
+        mimeType: 'text/markdown',
+      },
+    ],
+  };
+});
+
+// Handle read resource request
+server.setRequestHandler({ method: 'resources/read' } as any, async (request: any) => {
+  const { uri } = request.params;
+
+  if (uri === 'dflow://api/events') {
+    const events = await apiClient.get('/api/v1/events', { limit: 10 });
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: 'application/json',
+          text: JSON.stringify(events, null, 2),
+        },
+      ],
+    };
+  }
+
+  if (uri === 'dflow://api/markets') {
+    const markets = await apiClient.get('/api/v1/markets', { limit: 10 });
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: 'application/json',
+          text: JSON.stringify(markets, null, 2),
+        },
+      ],
+    };
+  }
+
+  if (uri === 'dflow://api/docs') {
+    const docs = `# DFlow Prediction Market API
+
+## Available Tools
+- get_events: Get all events
+- get_markets: Get all markets
+- get_trades: Get trade history
+- And 21 more specialized tools...
+
+## Example Usage
+1. List events: get_events with limit parameter
+2. Get specific event: get_event with event_id
+3. Analyze trades: get_trades with filtering options
+
+For full documentation, visit: https://dflow.opensvm.com
+`;
+    return {
+      contents: [
+        {
+          uri,
+          mimeType: 'text/markdown',
+          text: docs,
+        },
+      ],
+    };
+  }
+
+  throw new McpError(ErrorCode.InvalidRequest, `Unknown resource: ${uri}`);
 });
 
 // Handle tool call requests

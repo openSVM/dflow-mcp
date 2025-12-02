@@ -1,14 +1,17 @@
 {
-  "name": "dflow-mcp-server",
+  "name": "@openSVM/dflow-mcp",
   "version": "1.0.0",
-  "description": "MCP Server for Prediction Market Metadata API",
+  "description": "MCP Server for Prediction Market Metadata API - Access comprehensive prediction market data through 24 specialized tools",
   "type": "module",
   "module": "src/index.ts",
+  "displayName": "DFlow MCP Server",
+  "homepage": "https://dflow.opensvm.com",
+  "icon": "https://dflow.opensvm.com/icon.svg",
   "repository": {
     "type": "git",
     "url": "https://github.com/openSVM/dflow-mcp.git"
   },
-  "keywords": ["mcp", "model-context-protocol", "prediction-markets", "dflow", "api"],
+  "keywords": ["mcp", "model-context-protocol", "prediction-markets", "dflow", "api", "trading", "analytics", "solana"],
   "author": "openSVM",
   "license": "MIT",
   "scripts": {

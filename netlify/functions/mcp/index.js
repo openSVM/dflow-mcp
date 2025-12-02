@@ -364,7 +364,104 @@ const TOOLS = [
       required: ['q'],
     },
   },
+  {
+    name: 'candlestick_chart',
+    description: 'Generate ASCII candlestick chart with OHLCV data for a market. Returns a visual representation of price movements.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        ticker: { type: 'string', description: 'Market ticker' },
+        startTs: { type: 'integer', minimum: 0, description: 'Start timestamp' },
+        endTs: { type: 'integer', minimum: 0, description: 'End timestamp' },
+        periodInterval: { type: 'integer', minimum: 0, description: 'Interval size in seconds' },
+        width: { type: 'integer', minimum: 20, maximum: 200, description: 'Chart width in characters (default: 80)' },
+        height: { type: 'integer', minimum: 10, maximum: 50, description: 'Chart height in characters (default: 25)' },
+      },
+      required: ['ticker', 'startTs', 'endTs', 'periodInterval'],
+    },
+  },
 ];
+
+// ASCII Candlestick Chart Generator
+function generateCandlestickChart(candleData, width = 80, height = 25) {
+  if (!candleData || candleData.length === 0) {
+    return 'No candlestick data available';
+  }
+
+  // Extract OHLCV
+  const candles = candleData.map(c => ({
+    o: parseFloat(c.open),
+    h: parseFloat(c.high),
+    l: parseFloat(c.low),
+    c: parseFloat(c.close),
+    v: parseFloat(c.volume || 0)
+  }));
+
+  // Find min/max for scaling
+  let min = Infinity, max = -Infinity;
+  candles.forEach(c => {
+    min = Math.min(min, c.l);
+    max = Math.max(max, c.h);
+  });
+  const range = max - min || 1;
+
+  // Calculate stats
+  const first = candles[0].c;
+  const last = candles[candles.length - 1].c;
+  const change = ((last - first) / first * 100).toFixed(2);
+
+  // Initialize grid
+  const grid = Array(height).fill(null).map(() => Array(width).fill(' '));
+
+  const candleWidth = Math.max(1, Math.floor(width / candles.length) - 1);
+  const spacing = Math.floor((width - (candles.length * candleWidth)) / candles.length);
+
+  // Plot candles
+  candles.forEach((candle, idx) => {
+    const x = idx * (candleWidth + spacing);
+    const bullish = candle.c >= candle.o;
+
+    // Scale to chart height
+    const o = Math.floor((candle.o - min) / range * (height - 1));
+    const h = Math.floor((candle.h - min) / range * (height - 1));
+    const l = Math.floor((candle.l - min) / range * (height - 1));
+    const c = Math.floor((candle.c - min) / range * (height - 1));
+
+    const top = Math.max(o, c);
+    const bot = Math.min(o, c);
+
+    // Draw candle
+    for (let w = 0; w < candleWidth; w++) {
+      const col = x + w;
+      if (col >= width) break;
+
+      for (let row = l; row <= h; row++) {
+        if (row >= height) continue;
+        if (row >= bot && row <= top) {
+          grid[height - 1 - row][col] = bullish ? '█' : '▓';
+        } else {
+          grid[height - 1 - row][col] = bullish ? '│' : '│';
+        }
+      }
+    }
+  });
+
+  // Build output
+  let chart = '```\n';
+  chart += `Candlestick Chart (${candles.length} candles)\n`;
+  chart += `Range: ${min.toFixed(2)} → ${max.toFixed(2)} | Change: ${change}%\n`;
+  chart += `─`.repeat(width) + '\n';
+
+  grid.forEach(row => {
+    chart += row.join('') + '\n';
+  });
+
+  chart += `─`.repeat(width) + '\n';
+  chart += `First: ${first.toFixed(2)} → Last: ${last.toFixed(2)}\n`;
+  chart += '```';
+
+  return chart;
+}
 
 // Main request handler
 exports.handler = async function(event, context) {
@@ -543,6 +640,29 @@ exports.handler = async function(event, context) {
             break;
           case 'search_events':
             result = await apiRequest('GET', '/api/v1/search', toolArgs);
+            break;
+
+          case 'candlestick_chart':
+            const { ticker, startTs, endTs, periodInterval, width, height } = toolArgs;
+            const candleData = await apiRequest('GET', `/api/v1/market/${ticker}/candlesticks`, {
+              startTs,
+              endTs,
+              periodInterval
+            });
+
+            // Generate ASCII chart
+            const chart = generateCandlestickChart(
+              candleData.candlesticks || candleData.data || candleData,
+              width || 80,
+              height || 25
+            );
+
+            result = {
+              ticker,
+              timeframe: `${periodInterval}s intervals`,
+              dataPoints: candleData.candlesticks?.length || candleData.data?.length || 0,
+              chart
+            };
             break;
 
           default:

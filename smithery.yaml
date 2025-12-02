@@ -1,18 +1,19 @@
-runtime: "typescript"
 startCommand:
-  type: "http"
+  type: stdio
   configSchema:
     type: object
     properties:
       apiUrl:
         type: string
         title: "API URL"
-        description: "Base URL for the Prediction Market Metadata API (optional, defaults to https://prediction-markets-api.dflow.net)"
+        description: "Base URL for the Prediction Market Metadata API"
         default: "https://prediction-markets-api.dflow.net"
       requestTimeout:
         type: integer
         title: "Request Timeout (ms)"
-        description: "Timeout for API requests in milliseconds (optional, defaults to 30000)"
+        description: "Timeout for API requests in milliseconds"
         default: 30000
         minimum: 5000
         maximum: 120000
+  commandFunction: |-
+    (config) => ({ command: 'npx', args: ['ts-node', 'src/index.ts'] })

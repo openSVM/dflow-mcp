@@ -1616,20 +1616,25 @@ bun run dev
             }
 
             // Add copy button and render JSON
-            responseDiv.innerHTML = '<button class="copy-btn" onclick="copyResponse()">Copy Response</button>' +
+            responseDiv.innerHTML = '<button class="copy-btn" onclick="copyResponse()"><span class="glossy-icon-small" style="background: linear-gradient(135deg, #10B981, #059669); margin-right: 6px;"></span>Copy Response</button>' +
                                    '<pre>' + displayJson + '</pre>';
             responseDiv.classList.remove('error');
             responseDiv.classList.add('active');
 
-            // Extract and display metadata (only if not too large)
-            if (!truncated && data.result && data.result.content && data.result.content[0]) {
+            // ALWAYS extract and display metadata and charts
+            if (data.result && data.result.content && data.result.content[0]) {
                 try {
                     const content = JSON.parse(data.result.content[0].text);
                     showMetadata(content, metadataDiv);
                     showCharts(content, chartsDiv);
                 } catch (e) {
                     console.log('Could not parse content for metadata');
+                    // Even if parsing fails, try to show basic metadata
+                    showMetadata(data.result, metadataDiv);
                 }
+            } else {
+                // For tools.list or other responses without content field
+                showMetadata(data.result || data, metadataDiv);
             }
         }
 

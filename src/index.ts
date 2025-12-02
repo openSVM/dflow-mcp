@@ -21,14 +21,17 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 
-// Export configSchema for Smithery to discover
+/**
+ * Configuration schema for Smithery
+ * Exported for automatic discovery by @smithery/cli
+ */
 export const configSchema = z.object({
   apiUrl: z.string()
-    .default('https://prediction-markets-api.dflow.net')
-    .describe('Base URL for the Prediction Market Metadata API'),
+    .describe('Base URL for the Prediction Market Metadata API')
+    .default('https://prediction-markets-api.dflow.net'),
   requestTimeout: z.number()
-    .default(30000)
-    .describe('Timeout for API requests in milliseconds'),
+    .describe('Timeout for API requests in milliseconds')
+    .default(30000),
 });
 
 // API Configuration

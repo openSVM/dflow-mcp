@@ -1,0 +1,46 @@
+[build]
+  command = "bun run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "18"
+  BUN_VERSION = "latest"
+
+# Handle server requests by redirecting to documentation
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
+
+# Health check for deployment
+[[headers]]
+  for = "/health"
+  [headers.values]
+    Content-Type = "application/json"
+
+# API documentation
+[[headers]]
+  for = "/README.md"
+  [headers.values]
+    Content-Type = "text/markdown"
+    Cache-Control = "public, max-age=3600"
+
+# Source code headers
+[[headers]]
+  for = "/src/*"
+  [headers.values]
+    Content-Type = "application/typescript; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+# JSON files
+[[headers]]
+  for = "/*.json"
+  [headers.values]
+    Content-Type = "application/json"
+    Cache-Control = "public, max-age=3600"
+
+# Static assets
+[[headers]]
+  for = "/*.{js,css,txt,md}"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

@@ -1,0 +1,56 @@
+# DFlow MCP Server
+
+A Model Context Protocol (MCP) server for the Prediction Market Metadata API.
+
+## Quick Start
+
+### Using with Claude Desktop
+
+Add this server to your Claude Desktop configuration:
+
+```json
+{
+  "mcpServers": {
+    "dflow-mcp": {
+      "command": "bun",
+      "args": ["run", "https://dflow-mcp.netlify.app/src/index.ts"]
+    }
+  }
+}
+```
+
+### Available Tools
+
+This server provides 23 tools for accessing prediction market data:
+
+- **Event Management**: Get events, search, live data
+- **Market Operations**: Market data, batch queries, candlesticks  
+- **Trade Analytics**: Trade history, forecast percentiles
+- **Series Data**: Series templates, categories, filters
+- **Utilities**: Outcome mints, search, filtering
+
+### Example Usage
+
+```bash
+# Clone and run locally
+git clone https://github.com/openSVM/dflow-mcp.git
+cd dflow-mcp
+bun install
+bun run dev
+
+# Or test with our playground
+curl -X POST https://dflow-mcp.netlify.app/test \
+  -H "Content-Type: application/json" \
+  -d '{"tool": "get_events", "limit": 10}'
+```
+
+## Documentation
+
+- [📖 Full Documentation](/README.md)
+- [🤖 Agent Guide](/AGENTS.md)  
+- [🔧 API Specification](/llms_dflow.json)
+- [⚡ Live Demo](https://github.com/openSVM/dflow-mcp)
+
+---
+
+Built with [Bun](https://bun.sh) and [MCP](https://modelcontextprotocol.io)

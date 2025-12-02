@@ -119,8 +119,57 @@
         }
 
         .hero {
-            padding: 80px 0 40px 0;
+            padding: 60px 0 40px 0;
             text-align: center;
+        }
+
+        .partnership-banner {
+            background: linear-gradient(135deg, rgba(4, 63, 198, 0.1) 0%, rgba(0, 255, 0, 0.1) 100%);
+            border: 1px solid rgba(4, 63, 198, 0.3);
+            padding: 16px 32px;
+            margin: 0 0 48px 0;
+            text-align: center;
+        }
+
+        .partnership-logos {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin: 12px 0;
+        }
+
+        .partner-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            opacity: 0.9;
+            transition: opacity 0.2s;
+        }
+
+        .partner-logo:hover {
+            opacity: 1;
+        }
+
+        .kalshi-accent {
+            color: #043FC6;
+        }
+
+        .dflow-accent {
+            color: #00ff00;
+        }
+
+        .partnership-separator {
+            color: #888888;
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .partnership-tagline {
+            color: #888888;
+            font-size: 13px;
+            margin-top: 8px;
         }
 
         .install-section {
@@ -585,10 +634,23 @@
             </div>
         </nav>
 
+        <div class="partnership-banner">
+            <div class="partnership-logos">
+                <span class="partner-logo">OpenSVM<span style="opacity: 0.5; font-size: 13px; vertical-align: super;">[ai]</span></span>
+                <span class="partnership-separator">×</span>
+                <span class="partner-logo kalshi-accent">Kalshi</span>
+                <span class="partnership-separator">×</span>
+                <span class="partner-logo dflow-accent">DFlow</span>
+            </div>
+            <div class="partnership-tagline">
+                Bringing regulated prediction markets to AI agents • Trade on anything with MCP
+            </div>
+        </div>
+
         <div class="hero">
             <h1 class="hero-title">DFlow MCP Server</h1>
             <p class="hero-subtitle">
-                Model Context Protocol server for Prediction Market Metadata API. Connect Claude Desktop and other MCP clients to comprehensive prediction market data.
+                Access <span class="kalshi-accent" style="font-weight: 600;">Kalshi's</span> regulated prediction market data through <span class="dflow-accent" style="font-weight: 600;">DFlow's</span> API. Built for Claude Desktop and MCP clients.
             </p>
 
             <div style="margin: 32px 0;">
@@ -660,12 +722,49 @@ bun run dev
                 <div class="stat-label">MCP Tools</div>
             </div>
             <div class="stat">
+                <div class="stat-number" style="color: #043FC6;">CFTC</div>
+                <div class="stat-label">Regulated Markets</div>
+            </div>
+            <div class="stat">
                 <div class="stat-number">100%</div>
                 <div class="stat-label">API Coverage</div>
             </div>
             <div class="stat">
                 <div class="stat-number">TypeScript</div>
                 <div class="stat-label">Type Safe</div>
+            </div>
+        </div>
+
+        <div style="margin: 64px 0; padding: 48px 32px; background: rgba(4, 63, 198, 0.05); border: 1px solid rgba(4, 63, 198, 0.2);">
+            <h2 style="font-size: 28px; font-weight: 600; text-align: center; margin-bottom: 16px;">
+                Why <span class="kalshi-accent">Kalshi</span> × <span class="dflow-accent">DFlow</span>?
+            </h2>
+            <p style="text-align: center; color: #888888; margin-bottom: 48px; max-width: 700px; margin-left: auto; margin-right: auto;">
+                The only CFTC-regulated prediction market, now accessible to AI agents through MCP
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 32px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 36px; margin-bottom: 12px;">🏛️</div>
+                    <h3 style="color: #ffffff; font-size: 18px; margin-bottom: 8px;">CFTC Regulated</h3>
+                    <p style="color: #888888; font-size: 14px; line-height: 1.6;">
+                        Trade on the only legal prediction market in the US, fully regulated and compliant
+                    </p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 36px; margin-bottom: 12px;">🌐</div>
+                    <h3 style="color: #ffffff; font-size: 18px; margin-bottom: 8px;">Trade on Anything</h3>
+                    <p style="color: #888888; font-size: 14px; line-height: 1.6;">
+                        Politics, sports, crypto, economics - comprehensive coverage of real-world events
+                    </p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 36px; margin-bottom: 12px;">🤖</div>
+                    <h3 style="color: #ffffff; font-size: 18px; margin-bottom: 8px;">AI-Native Access</h3>
+                    <p style="color: #888888; font-size: 14px; line-height: 1.6;">
+                        Purpose-built for Claude and MCP clients - bring prediction markets to your AI workflow
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -895,8 +994,16 @@ bun run dev
                         OpenSVM<span class="logo-ai">[ai]</span>
                     </div>
                     <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 0;">
-                        Building the future of prediction markets on SVM. Open source tools and infrastructure for developers.
+                        Building AI-native tools for prediction markets. Partnership with Kalshi and DFlow brings regulated markets to AI agents.
                     </p>
+                </div>
+                <div>
+                    <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 16px 0;">Partners</h4>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://kalshi.com" class="nav-link" style="padding: 0; color: #043FC6;">Kalshi - Regulated Markets</a>
+                        <a href="https://dflow.net" class="nav-link" style="padding: 0; color: #00ff00;">DFlow - Prediction API</a>
+                        <a href="https://opensvm.com" class="nav-link" style="padding: 0;">OpenSVM - AI Infrastructure</a>
+                    </div>
                 </div>
                 <div>
                     <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 16px 0;">Resources</h4>
@@ -910,15 +1017,22 @@ bun run dev
                 <div>
                     <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 16px 0;">Connect</h4>
                     <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <a href="https://opensvm.com" class="nav-link" style="padding: 0;">OpenSVM Website</a>
-                        <a href="https://twitter.com/openSVM" class="nav-link" style="padding: 0;">Twitter</a>
-                        <a href="https://discord.gg/opensvm" class="nav-link" style="padding: 0;">Discord</a>
+                        <a href="https://twitter.com/Kalshi" class="nav-link" style="padding: 0;">Kalshi Twitter</a>
+                        <a href="https://twitter.com/openSVM" class="nav-link" style="padding: 0;">OpenSVM Twitter</a>
+                        <a href="https://discord.gg/opensvm" class="nav-link" style="padding: 0;">Discord Community</a>
                     </div>
                 </div>
             </div>
             <div style="text-align: center; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 13px; color: #666666; margin-bottom: 8px;">
+                    <span class="partner-logo" style="font-size: 14px;">OpenSVM</span>
+                    <span class="partnership-separator" style="margin: 0 8px;">×</span>
+                    <span class="partner-logo kalshi-accent" style="font-size: 14px;">Kalshi</span>
+                    <span class="partnership-separator" style="margin: 0 8px;">×</span>
+                    <span class="partner-logo dflow-accent" style="font-size: 14px;">DFlow</span>
+                </div>
                 <div style="font-size: 13px; color: #666666;">
-                    Built for the SVM ecosystem. MIT License © 2024 OpenSVM.
+                    Bringing regulated prediction markets to AI • MIT License © 2024 OpenSVM
                 </div>
             </div>
         </div>

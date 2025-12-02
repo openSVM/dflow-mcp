@@ -198,8 +198,7 @@ exports.handler = async function(event, context) {
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-api-key',
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache'
+      'Cache-Control': 'no-cache, no-store, must-revalidate'
     };
 
     // Handle getModels request (Claude Desktop discovery)
@@ -230,7 +229,7 @@ exports.handler = async function(event, context) {
 
     // Handle connectMCPServer request (Claude Desktop connection method)
     if (request.method === 'connectMCPServer') {
-      console.log('MCP CONNECT: Success');
+      console.log('MCP CONNECT: Processing request');
       const result = {
         jsonrpc: "2.0",
         id: request.id,
@@ -368,6 +367,88 @@ exports.handler = async function(event, context) {
       }
     }
 
+    // Handle tools/describe request (optional MCP spec)
+    if (request.method === 'tools/describe') {
+      console.log('MCP TOOLS/DESCRIBE: Success');
+      const toolName = request.params.name;
+      const tool = TOOLS.find(t => t.name === toolName);
+      
+      if (!tool) {
+        const errorResult = {
+          jsonrpc: "2.0",
+          id: request.id,
+          error: {
+            code: -32602,
+            message: `Tool not found: ${toolName}`
+          }
+        };
+        console.log('MCP TOOLS/DESCRIBE ERROR:', JSON.stringify(errorResult, null, 2));
+        return {
+          statusCode: 200,
+          headers: responseHeaders,
+          body: JSON.stringify(errorResult)
+        };
+      }
+
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: tool
+      };
+      console.log('MCP TOOLS/DESCRIBE RESPONSE:', JSON.stringify(result, null, 2));
+      return {
+        statusCode: 200,
+        headers: responseHeaders,
+        body: JSON.stringify(result)
+      };
+    }
+
+    // Handle server/info request
+    if (request.method === 'server/info') {
+      console.log('MCP SERVER/INFO: Success');
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: SERVER_INFO
+      };
+      console.log('MCP SERVER/INFO RESPONSE:', JSON.stringify(result, null, 2));
+      return {
+        statusCode: 200,
+        headers: responseHeaders,
+        body: JSON.stringify(result)
+      };
+    }
+
+    // Add health check method
+    if (request.method === 'health') {
+      console.log('MCP HEALTH: Check');
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: {
+          status: "healthy",
+          timestamp: new Date().toISOString(),
+          version: SERVER_INFO.serverInfo.version,
+          methods: [
+            'getModels',
+            'connectMCPServer',
+            'initialize',
+            'tools/list',
+            'tools/call',
+            'tools/describe',
+            'server/info',
+            'health'
+          ]
+        }
+      };
+      console.log('MCP HEALTH RESPONSE:', JSON.stringify(result, null, 2));
+      return {
+        statusCode: 200,
+        headers: responseHeaders,
+        body: JSON.stringify(result)
+      };
+    }
+
     // Method not found - Log what was attempted
     console.log('MCP METHOD NOT FOUND:', JSON.stringify({
       attempted: request.method,
@@ -379,7 +460,8 @@ exports.handler = async function(event, context) {
         'tools/list',
         'tools/call',
         'tools/describe',
-        'server/info'
+        'server/info',
+        'health'
       ]
     }, null, 2));
     return {
@@ -399,7 +481,8 @@ exports.handler = async function(event, context) {
               'tools/list',
               'tools/call',
               'tools/describe',
-              'server/info'
+              'server/info',
+              'health'
             ]
           }
         }

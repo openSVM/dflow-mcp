@@ -106,6 +106,7 @@ const TOOLS: Tool[] = [
   // Event endpoints
   {
     name: 'get_event',
+    title: 'Get Event Details',
     description: 'Get a single event by ticker. Returns event metadata including series ticker, subtitle, markets, strike information and volume.',
     inputSchema: {
       type: 'object',
@@ -121,9 +122,17 @@ const TOOLS: Tool[] = [
       },
       required: ['event_id'],
     },
+    annotations: {
+      title: 'Get Event Details',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_events',
+    title: 'Get Events List',
     description: 'Get a paginated list of all events with optional filtering and sorting.',
     inputSchema: {
       type: 'object',
@@ -162,11 +171,19 @@ const TOOLS: Tool[] = [
       },
       required: [],
     },
+    annotations: {
+      title: 'Get Events List',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Market endpoints
   {
     name: 'get_market',
+    title: 'Get Market Details',
     description: 'Get details of a market by ticker.',
     inputSchema: {
       type: 'object',
@@ -178,9 +195,17 @@ const TOOLS: Tool[] = [
       },
       required: ['market_id'],
     },
+    annotations: {
+      title: 'Get Market Details',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_market_by_mint',
+    title: 'Get Market by Mint Address',
     description: 'Get a market by looking up its mint address.',
     inputSchema: {
       type: 'object',
@@ -192,9 +217,17 @@ const TOOLS: Tool[] = [
       },
       required: ['mint_address'],
     },
+    annotations: {
+      title: 'Get Market by Mint Address',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_markets',
+    title: 'Get Markets List',
     description: 'Get a paginated list of markets with optional filtering.',
     inputSchema: {
       type: 'object',
@@ -225,9 +258,17 @@ const TOOLS: Tool[] = [
       },
       required: [],
     },
+    annotations: {
+      title: 'Get Markets List',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_markets_batch',
+    title: 'Get Markets Batch',
     description: 'Get multiple markets by tickers and/or mint addresses (up to 100 results).',
     inputSchema: {
       type: 'object',
@@ -245,11 +286,19 @@ const TOOLS: Tool[] = [
       },
       required: [],
     },
+    annotations: {
+      title: 'Get Markets Batch',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Trade endpoints
   {
     name: 'get_trades',
+    title: 'Get Trades',
     description: 'Get a paginated list of trades across markets with optional filtering.',
     inputSchema: {
       type: 'object',
@@ -280,9 +329,17 @@ const TOOLS: Tool[] = [
       },
       required: [],
     },
+    annotations: {
+      title: 'Get Trades',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_trades_by_mint',
+    title: 'Get Trades by Mint Address',
     description: 'Get trades for a market identified by a mint address.',
     inputSchema: {
       type: 'object',
@@ -313,11 +370,19 @@ const TOOLS: Tool[] = [
       },
       required: ['mint_address'],
     },
+    annotations: {
+      title: 'Get Trades by Mint Address',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Forecast endpoints
   {
     name: 'get_forecast_percentile_history',
+    title: 'Get Forecast Percentile History',
     description: 'Get historical raw and formatted forecast numbers for an event at specified percentiles.',
     inputSchema: {
       type: 'object',
@@ -352,9 +417,17 @@ const TOOLS: Tool[] = [
       },
       required: ['series_ticker', 'event_id', 'percentiles', 'startTs', 'endTs', 'periodInterval'],
     },
+    annotations: {
+      title: 'Get Forecast Percentile History',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_forecast_percentile_history_by_mint',
+    title: 'Get Forecast Percentile History by Mint',
     description: 'Get forecast history by looking up an event using a market mint address.',
     inputSchema: {
       type: 'object',
@@ -385,11 +458,19 @@ const TOOLS: Tool[] = [
       },
       required: ['mint_address', 'percentiles', 'startTs', 'endTs', 'periodInterval'],
     },
+    annotations: {
+      title: 'Get Forecast Percentile History by Mint',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Candlestick endpoints
   {
     name: 'get_event_candlesticks',
+    title: 'Get Event Candlesticks',
     description: 'Get event candlesticks from the Kalshi API. Resolves series ticker automatically.',
     inputSchema: {
       type: 'object',
@@ -416,9 +497,17 @@ const TOOLS: Tool[] = [
       },
       required: ['ticker', 'startTs', 'endTs', 'periodInterval'],
     },
+    annotations: {
+      title: 'Get Event Candlesticks',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_market_candlesticks',
+    title: 'Get Market Candlesticks',
     description: 'Get market candlesticks. Resolves series ticker automatically.',
     inputSchema: {
       type: 'object',
@@ -445,9 +534,17 @@ const TOOLS: Tool[] = [
       },
       required: ['ticker', 'startTs', 'endTs', 'periodInterval'],
     },
+    annotations: {
+      title: 'Get Market Candlesticks',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_market_candlesticks_by_mint',
+    title: 'Get Market Candlesticks by Mint',
     description: 'Get candlesticks by looking up a market by mint address.',
     inputSchema: {
       type: 'object',
@@ -474,11 +571,19 @@ const TOOLS: Tool[] = [
       },
       required: ['mint_address', 'startTs', 'endTs', 'periodInterval'],
     },
+    annotations: {
+      title: 'Get Market Candlesticks by Mint',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Live data endpoints
   {
     name: 'get_live_data',
+    title: 'Get Live Data',
     description: 'Get live data from the Kalshi API for specific milestones.',
     inputSchema: {
       type: 'object',
@@ -491,9 +596,17 @@ const TOOLS: Tool[] = [
       },
       required: ['milestoneIds'],
     },
+    annotations: {
+      title: 'Get Live Data',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_live_data_by_event',
+    title: 'Get Live Data by Event',
     description: 'Get live data for all milestones of an event.',
     inputSchema: {
       type: 'object',
@@ -525,9 +638,17 @@ const TOOLS: Tool[] = [
       },
       required: ['event_ticker'],
     },
+    annotations: {
+      title: 'Get Live Data by Event',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_live_data_by_mint',
+    title: 'Get Live Data by Mint Address',
     description: 'Get live data by looking up an event from a market mint address.',
     inputSchema: {
       type: 'object',
@@ -559,11 +680,19 @@ const TOOLS: Tool[] = [
       },
       required: ['mint_address'],
     },
+    annotations: {
+      title: 'Get Live Data by Mint Address',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Series endpoints
   {
     name: 'get_series',
+    title: 'Get Series Templates',
     description: 'Get all series templates with optional filtering.',
     inputSchema: {
       type: 'object',
@@ -587,9 +716,17 @@ const TOOLS: Tool[] = [
       },
       required: [],
     },
+    annotations: {
+      title: 'Get Series Templates',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_series_by_ticker',
+    title: 'Get Series by Ticker',
     description: 'Get a single series by its ticker.',
     inputSchema: {
       type: 'object',
@@ -601,11 +738,19 @@ const TOOLS: Tool[] = [
       },
       required: ['series_ticker'],
     },
+    annotations: {
+      title: 'Get Series by Ticker',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
 
   // Utility endpoints
   {
     name: 'get_outcome_mints',
+    title: 'Get Outcome Mints',
     description: 'Get a flat list of yes and no outcome mint pubkeys.',
     inputSchema: {
       type: 'object',
@@ -618,9 +763,17 @@ const TOOLS: Tool[] = [
       },
       required: [],
     },
+    annotations: {
+      title: 'Get Outcome Mints',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'filter_outcome_mints',
+    title: 'Filter Outcome Mints',
     description: 'Filter a list of addresses and return only outcome mints.',
     inputSchema: {
       type: 'object',
@@ -634,27 +787,51 @@ const TOOLS: Tool[] = [
       },
       required: ['addresses'],
     },
+    annotations: {
+      title: 'Filter Outcome Mints',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_tags_by_categories',
+    title: 'Get Tags by Categories',
     description: 'Get a mapping of series categories to tags.',
     inputSchema: {
       type: 'object',
       properties: {},
       required: [],
     },
+    annotations: {
+      title: 'Get Tags by Categories',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'get_filters_by_sports',
+    title: 'Get Filters by Sports',
     description: 'Get filtering options for each sport including scopes and competitions.',
     inputSchema: {
       type: 'object',
       properties: {},
       required: [],
     },
+    annotations: {
+      title: 'Get Filters by Sports',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
+    },
   },
   {
     name: 'search_events',
+    title: 'Search Events',
     description: 'Search events with nested markets by title or ticker.',
     inputSchema: {
       type: 'object',
@@ -693,6 +870,13 @@ const TOOLS: Tool[] = [
         },
       },
       required: ['q'],
+    },
+    annotations: {
+      title: 'Search Events',
+      readOnlyHint: true,
+      idempotentHint: true,
+      openWorldHint: true,
+      destructiveHint: false,
     },
   },
 ];

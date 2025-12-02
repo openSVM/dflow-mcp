@@ -1,4 +1,4 @@
-const BASE_URL = 'https://api.llm.dflow.org';
+const BASE_URL = 'https://prediction-markets-api.dflow.net';
 const DEFAULT_TIMEOUT = 30000;
 
 // API client function

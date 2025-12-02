@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is an MCP (Model Context Protocol) server that provides access to the Prediction Market Metadata API. The server wraps the REST API defined in `llms_dflow.json` and exposes it as MCP tools for use with Claude Desktop, Cursor, and other MCP clients.
 
-**Base API URL**: `https://api.llm.dflow.org`
+**Base API URL**: `https://prediction-markets-api.dflow.net`
 
 ## Commands
 

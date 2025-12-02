@@ -175,7 +175,7 @@ bun run test
 The server implements the complete REST API defined in `llms_dflow.json` with the following base URL:
 
 ```
-https://api.llm.dflow.org
+https://prediction-markets-api.dflow.net
 ```
 
 All tools include comprehensive parameter validation and type definitions. Error handling returns informative messages for debugging.

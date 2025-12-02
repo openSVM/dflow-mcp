@@ -119,8 +119,125 @@
         }
 
         .hero {
-            padding: 80px 0;
+            padding: 80px 0 40px 0;
             text-align: center;
+        }
+
+        .install-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 48px 32px;
+            margin: 48px 0;
+        }
+
+        .install-section h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 24px 0;
+            text-align: center;
+        }
+
+        .install-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .install-tab {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #888888;
+            padding: 10px 24px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .install-tab.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+        }
+
+        .install-content {
+            display: none;
+        }
+
+        .install-content.active {
+            display: block;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            color: #00ff00;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .tool-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .tool-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .tool-card h4 {
+            color: #00ff00;
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-family: monospace;
+        }
+
+        .tool-card p {
+            color: #888888;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .features-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 32px 0;
+        }
+
+        .features-table th,
+        .features-table td {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 16px;
+            text-align: left;
+        }
+
+        .features-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .features-table td {
+            color: #888888;
+        }
+
+        .check-mark {
+            color: #00ff00;
+            font-size: 18px;
         }
 
         .stats {
@@ -473,26 +590,73 @@
             <p class="hero-subtitle">
                 Model Context Protocol server for Prediction Market Metadata API. Connect Claude Desktop and other MCP clients to comprehensive prediction market data.
             </p>
-            
-            <div class="code-block">
+
+            <div style="margin: 32px 0;">
+                <a href="https://github.com/openSVM/dflow-mcp" class="btn-primary" style="margin-right: 12px;">
+                    View Source Code
+                </a>
+                <a href="https://smithery.ai/server/dflow-mcp-server" class="btn-secondary">
+                    Install via Smithery
+                </a>
+            </div>
+        </div>
+
+        <div class="install-section">
+            <h2>Quick Start <span class="badge">EASY SETUP</span></h2>
+
+            <div class="install-tabs">
+                <button class="install-tab active" onclick="showInstall('smithery')">Smithery (Recommended)</button>
+                <button class="install-tab" onclick="showInstall('manual')">Manual Installation</button>
+                <button class="install-tab" onclick="showInstall('config')">Claude Desktop Config</button>
+            </div>
+
+            <div id="install-smithery" class="install-content active">
+                <p style="text-align: center; color: #888888; margin-bottom: 24px;">
+                    The easiest way to install this MCP server. One command and you're ready to go!
+                </p>
+                <div class="code-block">
+npx @smithery/cli install dflow-mcp-server --client claude
+                </div>
+                <p style="text-align: center; color: #888888; font-size: 13px; margin-top: 16px;">
+                    This automatically configures the server for Claude Desktop. Restart Claude Desktop and you're done!
+                </p>
+            </div>
+
+            <div id="install-manual" class="install-content">
+                <p style="text-align: center; color: #888888; margin-bottom: 24px;">
+                    Clone the repository and install dependencies manually.
+                </p>
+                <div class="code-block">
+git clone https://github.com/openSVM/dflow-mcp.git
+cd dflow-mcp
+bun install
+bun run dev
+                </div>
+            </div>
+
+            <div id="install-config" class="install-content">
+                <p style="text-align: center; color: #888888; margin-bottom: 24px;">
+                    Add this configuration to your Claude Desktop config file.
+                </p>
+                <div class="code-block">
 {
   "mcpServers": {
     "dflow-mcp": {
       "command": "bun",
-      "args": ["run", "./src/index.ts"]
+      "args": ["run", "/path/to/dflow-mcp/src/index.ts"]
     }
   }
 }
+                </div>
+                <p style="text-align: center; color: #888888; font-size: 13px; margin-top: 16px;">
+                    Replace <code style="color: #00ff00;">/path/to/dflow-mcp</code> with your actual installation path.
+                </p>
             </div>
-
-            <a href="https://github.com/openSVM/dflow-mcp" class="btn-primary">
-                View Source Code
-            </a>
         </div>
 
         <div class="stats">
             <div class="stat">
-                <div class="stat-number">23</div>
+                <div class="stat-number">24</div>
                 <div class="stat-label">MCP Tools</div>
             </div>
             <div class="stat">
@@ -502,6 +666,114 @@
             <div class="stat">
                 <div class="stat-number">TypeScript</div>
                 <div class="stat-label">Type Safe</div>
+            </div>
+        </div>
+
+        <div style="margin: 64px 0;">
+            <h2 style="font-size: 32px; font-weight: 600; text-align: center; margin-bottom: 16px;">
+                Available Tools
+            </h2>
+            <p style="text-align: center; color: #888888; margin-bottom: 48px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Comprehensive access to prediction market data through 24 specialized tools across 8 categories.
+            </p>
+
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h4>get_events</h4>
+                    <p>Get paginated list of all prediction market events with optional filtering</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_event</h4>
+                    <p>Get detailed information about a single event by ticker with nested markets</p>
+                </div>
+                <div class="tool-card">
+                    <h4>search_events</h4>
+                    <p>Search events by title or ticker with sorting and pagination support</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_markets</h4>
+                    <p>Get paginated list of all markets with volume and liquidity data</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_market</h4>
+                    <p>Get detailed market information by ticker symbol</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_market_by_mint</h4>
+                    <p>Retrieve market details using Solana mint address</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_markets_batch</h4>
+                    <p>Fetch multiple markets in a single request (up to 100)</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_trades</h4>
+                    <p>Get trade history across all markets with filtering</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_trades_by_mint</h4>
+                    <p>Get trade history for a specific market by mint address</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_forecast_percentile_history</h4>
+                    <p>Historical forecast percentile data for time series analysis</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_forecast_percentile_history_by_mint</h4>
+                    <p>Forecast history by mint address with customizable time ranges</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_event_candlesticks</h4>
+                    <p>OHLC candlestick data for event-level price action</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_market_candlesticks</h4>
+                    <p>Market-level candlestick data for technical analysis</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_market_candlesticks_by_mint</h4>
+                    <p>Candlestick data retrieval using mint addresses</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_live_data</h4>
+                    <p>Real-time milestone information and live data feeds</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_live_data_by_event</h4>
+                    <p>Live data for specific events and milestones</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_live_data_by_mint</h4>
+                    <p>Real-time data retrieval by mint address</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_series</h4>
+                    <p>Get all series templates and category definitions</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_series_by_ticker</h4>
+                    <p>Retrieve specific series information by ticker</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_outcome_mints</h4>
+                    <p>Get outcome mint addresses for prediction markets</p>
+                </div>
+                <div class="tool-card">
+                    <h4>filter_outcome_mints</h4>
+                    <p>Filter addresses to identify outcome mints</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_tags_by_categories</h4>
+                    <p>Category-tag mapping for market organization</p>
+                </div>
+                <div class="tool-card">
+                    <h4>get_filters_by_sports</h4>
+                    <p>Sports-specific filtering options and metadata</p>
+                </div>
+                <div class="tool-card">
+                    <h4>candlestick_chart</h4>
+                    <p>Generate ASCII candlestick charts for visualization</p>
+                </div>
             </div>
         </div>
 
@@ -616,16 +888,38 @@
             </div>
         </div>
 
-        <div class="footer">
-            <div style="margin-bottom: 8px;">
-                <span class="logo-text">
-                    OpenSVM<span class="logo-ai">[ai]</span>
-                </span>
-                <span style="margin: 0 8px; color: #888888;">|</span>
-                <span style="color: #888888;">DFlow MCP Server</span>
+        <div class="footer" style="margin-top: 96px; padding: 48px 0; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 48px; margin-bottom: 48px;">
+                <div>
+                    <div class="logo-text" style="margin-bottom: 16px;">
+                        OpenSVM<span class="logo-ai">[ai]</span>
+                    </div>
+                    <p style="color: #666666; font-size: 14px; line-height: 1.6; margin: 0;">
+                        Building the future of prediction markets on SVM. Open source tools and infrastructure for developers.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 16px 0;">Resources</h4>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://github.com/openSVM/dflow-mcp" class="nav-link" style="padding: 0;">GitHub Repository</a>
+                        <a href="https://github.com/openSVM/dflow-mcp/blob/main/README.md" class="nav-link" style="padding: 0;">Documentation</a>
+                        <a href="https://smithery.ai/server/dflow-mcp-server" class="nav-link" style="padding: 0;">Smithery Registry</a>
+                        <a href="https://prediction-markets-api.dflow.net" class="nav-link" style="padding: 0;">API Endpoint</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 16px 0;">Connect</h4>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <a href="https://opensvm.com" class="nav-link" style="padding: 0;">OpenSVM Website</a>
+                        <a href="https://twitter.com/openSVM" class="nav-link" style="padding: 0;">Twitter</a>
+                        <a href="https://discord.gg/opensvm" class="nav-link" style="padding: 0;">Discord</a>
+                    </div>
+                </div>
             </div>
-            <div style="font-size: 12px; color: #666666;">
-                Built for the SVM ecosystem. © 2024 OpenSVM.
+            <div style="text-align: center; padding-top: 32px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 13px; color: #666666;">
+                    Built for the SVM ecosystem. MIT License © 2024 OpenSVM.
+                </div>
             </div>
         </div>
     </div>
@@ -633,6 +927,20 @@
     <script>
         let currentTool = 'tools.list';
         let requestId = 1;
+
+        function showInstall(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.install-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide content
+            document.querySelectorAll('.install-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`install-${tab}`).classList.add('active');
+        }
 
         function selectTool(toolName) {
             currentTool = toolName;

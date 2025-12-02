@@ -1,19 +1,19 @@
 [build]
-  command = "echo 'Static site ready'"
-  publish = "."
+  command = "bun run build"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18"
   BUN_VERSION = "latest"
 
-# Health check endpoint
-[[redirects]]
-  from = "/health"
-  to = "/.netlify/functions/health"
-  status = 200
-
-# Handle all other routes with index.html
+# Handle MCP JSON-RPC requests at root
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/server"
+  status = 200
+
+# Health endpoint
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/server"
   status = 200

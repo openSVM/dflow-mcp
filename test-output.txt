@@ -1,0 +1,19 @@
+DFlow MCP Server starting on port 3000...
+JSON-RPC endpoint: http://localhost:3000
+Health check: http://localhost:3000/health
+416 | console.log('DFlow MCP Server starting on port 3000...');
+417 | console.log('JSON-RPC endpoint: http://localhost:3000');
+418 | console.log('Health check: http://localhost:3000/health');
+419 | 
+420 | // Start the server
+421 | serve(webServer, {
+      ^
+error: Failed to start server. Is port 3000 in use?
+ syscall: "listen",
+   errno: 0,
+    code: "EADDRINUSE"
+
+      at /home/larp/larpdevs/dflow-mcp/web-server.ts:421:1
+      at loadAndEvaluateModule (2:1)
+
+Bun v1.2.16 (Linux x64)

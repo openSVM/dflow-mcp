@@ -8,7 +8,7 @@
     "dev": "bun run --watch src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target bun",
     "test": "bun test",
-    "serve": "deno run --allow-read --allow-net server.ts",
+    "serve": "bun run web-server.ts",
     "deploy": "netlify deploy --prod --dir=."
   },
   "dependencies": {

@@ -143,9 +143,6 @@ const SERVER_INFO = {
 exports.handler = async function(event, context) {
   const { httpMethod, body, headers, requestContext } = event;
 
-  // Log the incoming request for debugging
-  console.log('DEBUG: Incoming request', { httpMethod, body });
-
   // Handle OPTIONS for CORS
   if (httpMethod === 'OPTIONS') {
     return {
@@ -180,7 +177,6 @@ exports.handler = async function(event, context) {
 
   try {
     const request = JSON.parse(body);
-    console.log('DEBUG: Parsed request', { method: request.method, id: request.id });
 
     // Add CORS headers to all responses
     const responseHeaders = {
@@ -191,9 +187,31 @@ exports.handler = async function(event, context) {
       'Cache-Control': 'no-cache'
     };
 
+    // Handle getModels request (Claude Desktop discovery)
+    if (request.method === 'getModels') {
+      return {
+        statusCode: 200,
+        headers: responseHeaders,
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          result: {
+            models: [
+              {
+                id: "dflow-prediction-markets",
+                name: "DFlow Prediction Markets",
+                description: "Access prediction market events, markets, trades, and live data",
+                provider: "dflow-mcp-server",
+                capabilities: ["tools", "text-generation"]
+              }
+            ]
+          }
+        })
+      };
+    }
+
     // Handle connectMCPServer request (Claude Desktop connection method)
     if (request.method === 'connectMCPServer') {
-      console.log('DEBUG: Handling connectMCPServer');
       return {
         statusCode: 200,
         headers: responseHeaders,
@@ -219,7 +237,6 @@ exports.handler = async function(event, context) {
 
     // Handle initialize request (MCP spec)
     if (request.method === 'initialize') {
-      console.log('DEBUG: Handling initialize');
       return {
         statusCode: 200,
         headers: responseHeaders,
@@ -233,7 +250,6 @@ exports.handler = async function(event, context) {
 
     // Handle tools/list request (MCP standard)
     if (request.method === 'tools/list') {
-      console.log('DEBUG: Handling tools/list');
       return {
         statusCode: 200,
         headers: responseHeaders,
@@ -249,7 +265,6 @@ exports.handler = async function(event, context) {
 
     // Handle tools/call request (MCP standard)
     if (request.method === 'tools/call') {
-      console.log('DEBUG: Handling tools/call');
       const { name, arguments: args } = request.params;
       const toolArgs = args || {};
 
@@ -316,9 +331,39 @@ exports.handler = async function(event, context) {
       }
     }
 
+    // Handle tools/describe request (optional MCP spec)
+    if (request.method === 'tools/describe') {
+      const toolName = request.params.name;
+      const tool = TOOLS.find(t => t.name === toolName);
+      
+      if (!tool) {
+        return {
+          statusCode: 200,
+          headers: responseHeaders,
+          body: JSON.stringify({
+            jsonrpc: "2.0",
+            id: request.id,
+            error: {
+              code: -32602,
+              message: `Tool not found: ${toolName}`
+            }
+          })
+        };
+      }
+
+      return {
+        statusCode: 200,
+        headers: responseHeaders,
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          result: tool
+        })
+      };
+    }
+
     // Handle server info request
     if (request.method === 'server/info') {
-      console.log('DEBUG: Handling server/info');
       return {
         statusCode: 200,
         headers: responseHeaders,
@@ -330,8 +375,7 @@ exports.handler = async function(event, context) {
       };
     }
 
-    // Method not found - Log what methods were tried
-    console.log('DEBUG: Method not found', { method: request.method });
+    // Method not found
     return {
       statusCode: 200,
       headers: responseHeaders,
@@ -343,10 +387,12 @@ exports.handler = async function(event, context) {
           message: 'Method not found',
           data: {
             available_methods: [
+              'getModels',
               'connectMCPServer',
               'initialize',
               'tools/list',
               'tools/call',
+              'tools/describe',
               'server/info'
             ]
           }
@@ -355,7 +401,6 @@ exports.handler = async function(event, context) {
     };
 
   } catch (error) {
-    console.log('DEBUG: Parse error', error.message);
     return {
       statusCode: 200,
       headers: {

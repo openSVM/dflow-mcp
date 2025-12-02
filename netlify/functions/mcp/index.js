@@ -395,6 +395,40 @@ exports.handler = async function(event, context) {
   try {
     const request = JSON.parse(body);
 
+    // Handle initialize
+    if (request.method === 'initialize') {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          id: request.id,
+          result: {
+            protocolVersion: "2024-11-05",
+            capabilities: {
+              tools: {},
+            },
+            serverInfo: {
+              name: "dflow-mcp-server",
+              version: "1.0.0"
+            }
+          }
+        })
+      };
+    }
+
+    // Handle initialized notification
+    if (request.method === 'notifications/initialized') {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          result: {}
+        })
+      };
+    }
+
     // Handle tools.list
     if (request.method === 'tools.list' || request.method === 'tools/list') {
       return {

@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 /**
  * MCP Server for Prediction Market Metadata API
- * 
- * This server implements a Model Context Protocol (MCP) interface to the 
+ *
+ * This server implements a Model Context Protocol (MCP) interface to the
  * Prediction Market Metadata API defined in llms_dflow.json.
  */
 
@@ -19,6 +19,17 @@ import {
   McpError,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
+import { z } from 'zod';
+
+// Export configSchema for Smithery to discover
+export const configSchema = z.object({
+  apiUrl: z.string()
+    .default('https://prediction-markets-api.dflow.net')
+    .describe('Base URL for the Prediction Market Metadata API'),
+  requestTimeout: z.number()
+    .default(30000)
+    .describe('Timeout for API requests in milliseconds'),
+});
 
 // API Configuration
 const BASE_URL = 'https://prediction-markets-api.dflow.net';

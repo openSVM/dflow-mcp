@@ -143,6 +143,14 @@ const SERVER_INFO = {
 exports.handler = async function(event, context) {
   const { httpMethod, body, headers, requestContext } = event;
 
+  // Log every request for debugging
+  console.log('MCP REQUEST:', JSON.stringify({
+    timestamp: new Date().toISOString(),
+    method: httpMethod,
+    path: headers.host + (requestContext.path || ''),
+    userAgent: headers['user-agent'] || 'unknown'
+  }, null, 2));
+
   // Handle OPTIONS for CORS
   if (httpMethod === 'OPTIONS') {
     return {
@@ -177,6 +185,12 @@ exports.handler = async function(event, context) {
 
   try {
     const request = JSON.parse(body);
+    console.log('MCP METHOD:', JSON.stringify({
+      timestamp: new Date().toISOString(),
+      method: request.method,
+      id: request.id,
+      hasParams: !!request.params
+    }, null, 2));
 
     // Add CORS headers to all responses
     const responseHeaders = {
@@ -184,87 +198,103 @@ exports.handler = async function(event, context) {
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-api-key',
       'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache'
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache'
     };
 
     // Handle getModels request (Claude Desktop discovery)
     if (request.method === 'getModels') {
+      console.log('MCP GETMODELS: Success');
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: {
+          models: [
+            {
+              id: "dflow-prediction-markets",
+              name: "DFlow Prediction Markets",
+              description: "Access prediction market events, markets, trades, and live data",
+              provider: "dflow-mcp-server",
+              capabilities: ["tools", "text-generation"]
+            }
+          ]
+        }
+      };
+      console.log('MCP GETMODELS RESPONSE:', JSON.stringify(result, null, 2));
       return {
         statusCode: 200,
         headers: responseHeaders,
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: {
-            models: [
-              {
-                id: "dflow-prediction-markets",
-                name: "DFlow Prediction Markets",
-                description: "Access prediction market events, markets, trades, and live data",
-                provider: "dflow-mcp-server",
-                capabilities: ["tools", "text-generation"]
-              }
-            ]
-          }
-        })
+        body: JSON.stringify(result)
       };
     }
 
     // Handle connectMCPServer request (Claude Desktop connection method)
     if (request.method === 'connectMCPServer') {
+      console.log('MCP CONNECT: Success');
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: {
+          name: SERVER_INFO.serverInfo.name,
+          version: SERVER_INFO.serverInfo.version,
+          description: SERVER_INFO.serverInfo.description,
+          capabilities: SERVER_INFO.capabilities,
+          tools: TOOLS.map(tool => ({
+            name: tool.name,
+            description: tool.description,
+            inputSchema: tool.inputSchema
+          })),
+          connected: true,
+          server_url: "https://dflow.opensvm.com/api/mcp",
+          status: "connected",
+          timestamp: new Date().toISOString()
+        }
+      };
+      console.log('MCP CONNECT RESPONSE:', JSON.stringify(result, null, 2));
       return {
         statusCode: 200,
         headers: responseHeaders,
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: {
-            name: SERVER_INFO.serverInfo.name,
-            version: SERVER_INFO.serverInfo.version,
-            description: SERVER_INFO.serverInfo.description,
-            capabilities: SERVER_INFO.capabilities,
-            tools: TOOLS.map(tool => ({
-              name: tool.name,
-              description: tool.description,
-              inputSchema: tool.inputSchema
-            })),
-            connected: true,
-            server_url: "https://dflow.opensvm.com/api/mcp"
-          }
-        })
+        body: JSON.stringify(result)
       };
     }
 
     // Handle initialize request (MCP spec)
     if (request.method === 'initialize') {
+      console.log('MCP INITIALIZE: Success');
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: SERVER_INFO
+      };
+      console.log('MCP INITIALIZE RESPONSE:', JSON.stringify(result, null, 2));
       return {
         statusCode: 200,
         headers: responseHeaders,
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: SERVER_INFO
-        })
+        body: JSON.stringify(result)
       };
     }
 
     // Handle tools/list request (MCP standard)
     if (request.method === 'tools/list') {
+      console.log('MCP TOOLS/LIST: Success');
+      const result = {
+        jsonrpc: "2.0",
+        id: request.id,
+        result: {
+          tools: TOOLS
+        }
+      };
+      console.log('MCP TOOLS/LIST RESPONSE:', JSON.stringify(result, null, 2));
       return {
         statusCode: 200,
         headers: responseHeaders,
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: {
-            tools: TOOLS
-          }
-        })
+        body: JSON.stringify(result)
       };
     }
 
     // Handle tools/call request (MCP standard)
     if (request.method === 'tools/call') {
+      console.log('MCP TOOLS/CALL: Starting');
       const { name, arguments: args } = request.params;
       const toolArgs = args || {};
 
@@ -295,23 +325,30 @@ exports.handler = async function(event, context) {
             throw new Error(`Unknown tool: ${name}`);
         }
 
+        const response = {
+          jsonrpc: "2.0",
+          id: request.id,
+          result: {
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(result, null, 2)
+              }
+            ]
+          }
+        };
+        console.log('MCP TOOLS/CALL SUCCESS:', JSON.stringify(response, null, 2));
         return {
           statusCode: 200,
           headers: responseHeaders,
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            id: request.id,
-            result: {
-              content: [
-                {
-                  type: 'text',
-                  text: JSON.stringify(result, null, 2)
-                }
-              ]
-            }
-          })
+          body: JSON.stringify(response)
         };
       } catch (error) {
+        console.log('MCP TOOLS/CALL ERROR:', JSON.stringify({
+          tool: name,
+          arguments: toolArgs,
+          error: error.message
+        }, null, 2));
         return {
           statusCode: 200,
           headers: responseHeaders,
@@ -331,51 +368,20 @@ exports.handler = async function(event, context) {
       }
     }
 
-    // Handle tools/describe request (optional MCP spec)
-    if (request.method === 'tools/describe') {
-      const toolName = request.params.name;
-      const tool = TOOLS.find(t => t.name === toolName);
-      
-      if (!tool) {
-        return {
-          statusCode: 200,
-          headers: responseHeaders,
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            id: request.id,
-            error: {
-              code: -32602,
-              message: `Tool not found: ${toolName}`
-            }
-          })
-        };
-      }
-
-      return {
-        statusCode: 200,
-        headers: responseHeaders,
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: tool
-        })
-      };
-    }
-
-    // Handle server info request
-    if (request.method === 'server/info') {
-      return {
-        statusCode: 200,
-        headers: responseHeaders,
-        body: JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: SERVER_INFO
-        })
-      };
-    }
-
-    // Method not found
+    // Method not found - Log what was attempted
+    console.log('MCP METHOD NOT FOUND:', JSON.stringify({
+      attempted: request.method,
+      id: request.id,
+      available: [
+        'getModels',
+        'connectMCPServer',
+        'initialize',
+        'tools/list',
+        'tools/call',
+        'tools/describe',
+        'server/info'
+      ]
+    }, null, 2));
     return {
       statusCode: 200,
       headers: responseHeaders,
@@ -401,6 +407,10 @@ exports.handler = async function(event, context) {
     };
 
   } catch (error) {
+    console.log('MCP PARSE ERROR:', JSON.stringify({
+      message: error.message,
+      stack: error.stack
+    }, null, 2));
     return {
       statusCode: 200,
       headers: {

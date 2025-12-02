@@ -1,99 +1,59 @@
 [build]
 command = "npm install"
 
-# Latest Netlify Functions configuration
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-  included_files = ["node_modules/**"]
 
-# Primary MCP Server - Point to standard-mcp for JSON-RPC 2.0
+# Simple working MCP API
 [[redirects]]
   from = "/api/mcp"
-  to = "/.netlify/functions/standard-mcp"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
 [[redirects]]
   from = "/api/mcp/*"
-  to = "/.netlify/functions/standard-mcp"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
-# Universal MCP Server - For Claude Desktop and multi-protocol support
+# Universal endpoints
 [[redirects]]
   from = "/mcp"
-  to = "/.netlify/functions/universal-mcp"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
 [[redirects]]
   from = "/mcp/*"
-  to = "/.netlify/functions/universal-mcp"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
-# Claude Desktop Specific Endpoints
 [[redirects]]
   from = "/mcp/v2/bootstrap"
-  to = "/.netlify/functions/universal-mcp"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
-[[redirects]]
-  from = "/mcp/v2/*"
-  to = "/.netlify/functions/universal-mcp"
-  status = 200
-  force = true
-
-# SSE Endpoint
 [[redirects]]
   from = "/sse"
-  to = "/.netlify/functions/universal-mcp"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
-[[redirects]]
-  from = "/sse/*"
-  to = "/.netlify/functions/universal-mcp"
-  status = 200
-  force = true
-
-# Health Check
+# Health check
 [[redirects]]
   from = "/health"
-  to = "/.netlify/functions/health"
+  to = "/.netlify/functions/mcp-api"
   status = 200
   force = true
 
-# Headers for CORS and security
+# Headers
 [[headers]]
   for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type, Authorization, x-api-key, Last-Event-ID"
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-
-# Headers for SSE endpoints
-[[headers]]
-  for = "/sse/*"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
-
-[[headers]]
-  for = "/mcp/events"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
-
-[[headers]]
-  for = "/api/mcp/events"
-  [headers.values]
-    Cache-Control = "no-cache, no-store, must-revalidate"
-    Pragma = "no-cache"
-    Expires = "0"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, x-api-key"

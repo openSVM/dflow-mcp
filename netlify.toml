@@ -1,31 +1,33 @@
 [build]
 command = "npm install"
 
+# MCP v2 with SSE Support
 [[redirects]]
   from = "/mcp/v2/bootstrap"
-  to = "/.netlify/functions/mcp-v2-bootstrap"
+  to = "/.netlify/functions/mcp-v2-sse"
   status = 200
 
 [[redirects]]
-  from = "/mcp/v2/connect"
-  to = "/.netlify/functions/mcp-v2-bootstrap"
+  from = "/mcp/v2/events"
+  to = "/.netlify/functions/mcp-v2-sse"
   status = 200
 
 [[redirects]]
   from = "/mcp/v2/tools/list"
-  to = "/.netlify/functions/mcp-v2-bootstrap"
+  to = "/.netlify/functions/mcp-v2-sse"
   status = 200
 
 [[redirects]]
   from = "/mcp/v2/tools/call"
-  to = "/.netlify/functions/mcp-v2-bootstrap"
+  to = "/.netlify/functions/mcp-v2-sse"
   status = 200
 
 [[redirects]]
   from = "/mcp/v2/*"
-  to = "/.netlify/functions/mcp-v2-bootstrap"
+  to = "/.netlify/functions/mcp-v2-sse"
   status = 200
 
+# Legacy API endpoint
 [[redirects]]
   from = "/api/mcp"
   to = "/.netlify/functions/mcp"

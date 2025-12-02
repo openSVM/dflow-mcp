@@ -5,239 +5,322 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DFlow MCP Server | OpenSVM</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #00D4FF;
-            --secondary-color: #FF006E;
-            --dark-bg: #0A0E1A;
-            --dark-secondary: #151922;
-            --text-primary: #FFFFFF;
-            --text-secondary: #94A3B8;
-            --border-color: #2A3244;
-            --gradient-1: linear-gradient(135deg, #00D4FF 0%, #0099CC 100%);
-            --gradient-2: linear-gradient(135deg, #FF006E 0%, #CC0055 100%);
-        }
-
         body {
-            background: var(--dark-bg);
-            color: var(--text-primary);
+            background: #000000;
+            color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        .gradient-text {
-            background: var(--gradient-1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
         }
 
-        .hero-gradient {
-            background: linear-gradient(180deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+        .logo-ai {
+            opacity: 0.7;
+            font-size: 14px;
+            vertical-align: super;
         }
 
-        .glass-effect {
-            background: rgba(21, 25, 34, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
+        .nav-link {
+            color: #888888;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: inline-block;
         }
 
-        .tool-card {
-            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+        .nav-link:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .tool-card:hover {
-            border-color: var(--primary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+        .nav-link.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        .hero-subtitle {
+            color: #888888;
+            font-size: 18px;
+            line-height: 1.5;
+            margin: 16px 0 32px 0;
+            max-width: 600px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            margin: 48px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .stat-label {
+            color: #888888;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 24px 0;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .tool-category {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .tool-category h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            color: #ffffff;
+        }
+
+        .tool-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .tool-list li {
+            color: #888888;
+            font-size: 14px;
+            padding: 4px 0;
         }
 
         .code-block {
-            background: var(--dark-secondary);
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            font-family: 'Courier New', monospace;
+            padding: 16px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            color: #ffffff;
+            overflow-x: auto;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        .btn-primary {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
         }
 
-        .float-animation {
-            animation: float 3s ease-in-out infinite;
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .section {
+            padding: 48px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .cta {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 48px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #888888;
+            font-size: 14px;
         }
     </style>
 </head>
-<body class="min-h-screen">
-    <!-- Navigation -->
-    <nav class="border-b border-gray-800 glass-effect sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <div class="text-2xl font-bold gradient-text">OpenSVM[ai]</div>
-                    <span class="text-gray-400">|</span>
-                    <span class="text-lg text-gray-300">DFlow MCP</span>
-                </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#" class="text-gray-300 hover:text-white transition">Documentation</a>
-                    <a href="#" class="text-gray-300 hover:text-white transition">API Reference</a>
-                    <a href="#" class="text-gray-300 hover:text-white transition">GitHub</a>
-                    <a href="#" class="text-gray-300 hover:text-white transition">Try Demo</a>
-                </div>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <div class="logo-text">
+                OpenSVM<span class="logo-ai">[ai]</span>
             </div>
-        </div>
-    </nav>
+            <div>
+                <a href="#" class="nav-link active">DFlow MCP</a>
+                <a href="https://opensvm.com" class="nav-link">Explore</a>
+                <a href="#" class="nav-link">Documentation</a>
+                <a href="https://github.com/openSVM/dflow-mcp" class="nav-link">GitHub</a>
+            </div>
+        </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-gradient py-20">
-        <div class="container mx-auto px-6 text-center">
-            <div class="float-animation inline-block mb-8">
-                <div class="w-20 h-20 mx-auto bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center">
-                    <i class="fas fa-plug text-3xl text-white"></i>
-                </div>
-            </div>
-            
-            <h1 class="text-5xl md:text-6xl font-bold mb-6">
-                <span class="gradient-text">DFlow MCP Server</span>
-            </h1>
-            
-            <p class="text-xl text-gray-400 mb-8 max-w-3xl mx-auto">
-                Model Context Protocol server for Prediction Market Metadata API. 
-                Connect Claude Desktop, Cursor, and other MCP clients to comprehensive prediction market data.
+        <div class="hero">
+            <h1 class="hero-title">DFlow MCP Server</h1>
+            <p class="hero-subtitle">
+                Model Context Protocol server for Prediction Market Metadata API. Connect Claude Desktop and other MCP clients to comprehensive prediction market data.
             </p>
-
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-                <button onclick="scrollToSection('quick-start')" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition transform hover:scale-105">
-                    Quick Start
-                </button>
-                <a href="https://github.com/openSVM/dflow-mcp" target="_blank" class="px-8 py-3 glass-effect rounded-lg font-semibold hover:bg-gray-700 transition transform hover:scale-105 flex items-center justify-center">
-                    <i class="fab fa-github mr-2"></i>
-                    View on GitHub
-                </a>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <a href="#quick-start" class="btn-primary">Get Started</a>
+                <a href="https://github.com/openSVM/dflow-mcp" class="btn-primary">View Source</a>
             </div>
         </div>
-    </section>
 
-    <!-- Stats Section -->
-    <section class="py-12 border-y border-gray-800">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                    <div class="text-3xl font-bold gradient-text mb-2">23</div>
-                    <div class="text-gray-400">MCP Tools</div>
+        <div class="section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">23</div>
+                    <div class="stat-label">MCP Tools</div>
                 </div>
-                <div>
-                    <div class="text-3xl font-bold gradient-text mb-2">100%</div>
-                    <div class="text-gray-400">API Coverage</div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">API Coverage</div>
                 </div>
-                <div>
-                    <div class="text-3xl font-bold gradient-text mb-2">TypeScript</div>
-                    <div class="text-gray-400">Type Safety</div>
+                <div class="stat-item">
+                    <div class="stat-number">TypeScript</div>
+                    <div class="stat-label">Type Safe</div>
                 </div>
-                <div>
-                    <div class="text-3xl font-bold gradient-text mb-2">MCP 2.0</div>
-                    <div class="text-gray-400">Protocol</div>
+                <div class="stat-item">
+                    <div class="stat-number">MCP 2.0</div>
+                    <div class="stat-label">Protocol</div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Quick Start Section -->
-    <section id="quick-start" class="py-20">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center mb-12">
-                Quick <span class="gradient-text">Start</span>
-            </h2>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                <div class="tool-card p-6 rounded-xl">
-                    <div class="w-12 h-12 bg-cyan-500 bg-opacity-20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-robot text-cyan-400"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Claude Desktop</h3>
-                    <p class="text-gray-400 mb-4">Add to Claude Desktop configuration for immediate access to prediction market data.</p>
-                    <div class="code-block p-3 text-sm">
-                        <code>"dflow-mcp": {<br>
-                        &nbsp;&nbsp;"command": "bun",<br>
-                        &nbsp;&nbsp;"args": ["run", "./src/index.ts"]<br>
-                        }</code>
+        <div id="quick-start" class="section">
+            <h2 class="section-title">Quick Start</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px;">
+                <div>
+                    <h3 style="font-size: 18px; font-weight: 600; margin: 0 0 16px 0;">Claude Desktop</h3>
+                    <p style="color: #888888; margin: 0 0 16px 0;">Add to Claude Desktop configuration:</p>
+                    <div class="code-block">
+{
+  "mcpServers": {
+    "dflow-mcp": {
+      "command": "bun",
+      "args": ["run", "./src/index.ts"]
+    }
+  }
+}
                     </div>
                 </div>
-
-                <div class="tool-card p-6 rounded-xl">
-                    <div class="w-12 h-12 bg-cyan-500 bg-opacity-20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-terminal text-cyan-400"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Terminal Usage</h3>
-                    <p class="text-gray-400 mb-4">Run locally with Bun for development and testing.</p>
-                    <div class="code-block p-3 text-sm">
-                        <code>git clone repo<br>
-                        cd dflow-mcp<br>
-                        bun install<br>
-                        bun run dev</code>
-                    </div>
-                </div>
-
-                <div class="tool-card p-6 rounded-xl">
-                    <div class="w-12 h-12 bg-cyan-500 bg-opacity-20 rounded-lg flex items-center justify-center mb-4">
-                        <i class="fas fa-cloud text-cyan-400"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Cloud Deploy</h3>
-                    <p class="text-gray-400 mb-4">Deploy to Netlify or any static hosting platform.</p>
-                    <div class="code-block p-3 text-sm">
-                        <code>netlify deploy --prod<br>
-                        # or connect repo to<br>
-                        # Netlify for auto-deploy</code>
+                <div>
+                    <h3 style="font-size: 18px; font-weight: 600; margin: 0 0 16px 0;">Terminal Usage</h3>
+                    <p style="color: #888888; margin: 0 0 16px 0;">Run locally for development:</p>
+                    <div class="code-block">
+git clone https://github.com/openSVM/dflow-mcp.git
+cd dflow-mcp
+bun install
+bun run dev
                     </div>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Tools Overview -->
-    <section class="py-20 border-y border-gray-800">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center mb-12">
-                Available <span class="gradient-text">Tools</span>
-            </h2>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="tool-card p-6 rounded-xl">
-                    <h3 class="text-cyan-400 font-semibold mb-3">Event Management</h3>
-                    <ul class="text-gray-400 space-y-2 text-sm">
+        <div class="section">
+            <h2 class="section-title">Available Tools</h2>
+            <div class="tools-grid">
+                <div class="tool-category">
+                    <h3>Event Management</h3>
+                    <ul class="tool-list">
                         <li>• Get events by ticker</li>
                         <li>• Search and filter events</li>
                         <li>• Live event data</li>
                         <li>• Event metadata</li>
                     </ul>
                 </div>
-
-                <div class="tool-card p-6 rounded-xl">
-                    <h3 class="text-cyan-400 font-semibold mb-3">Market Operations</h3>
-                    <ul class="text-gray-400 space-y-2 text-sm">
+                <div class="tool-category">
+                    <h3>Market Operations</h3>
+                    <ul class="tool-list">
                         <li>• Market details by ticker</li>
                         <li>• Market lookup by mint</li>
                         <li>• Batch market queries</li>
                         <li>• Market filtering</li>
                     </ul>
                 </div>
-
-                <div class="tool-card p-6 rounded-xl">
-                    <h3 class="text-cyan-400 font-semibold mb-3">Trading Data</h3>
-                    <ul class="text-gray-400 space-y-2 text-sm">
+                <div class="tool-category">
+                    <h3>Trading Data</h3>
+                    <ul class="tool-list">
                         <li>• Trade history</li>
                         <li>• Candlestick data</li>
                         <li>• Forecast analytics</li>
                         <li>• Market metrics</li>
                     </ul>
                 </div>
-
-                <div class="tool-card p-6 rounded-xl">
-                    <h3 class="text-cyan-400 font-semibold mb-3">Series & Filters</h3>
-                    <ul class="text-gray-400 space-y-2 text-sm">
+                <div class="tool-category">
+                    <h3>Series & Filters</h3>
+                    <ul class="tool-list">
                         <li>• Series templates</li>
                         <li>• Category filters</li>
                         <li>• Sports filters</li>
@@ -246,127 +329,58 @@
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Features Section -->
-    <section class="py-20">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center mb-12">
-                <span class="gradient-text">Features</span>
-            </h2>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center mb-4">
-                        <i class="fas fa-bolt text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Real-time Data</h3>
-                    <p class="text-gray-400">Live prediction market data with real-time updates and comprehensive analytics.</p>
-                </div>
-
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center mb-4">
-                        <i class="fas fa-shield-alt text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Type Safe</h3>
-                    <p class="text-gray-400">Full TypeScript support with comprehensive type definitions and validation.</p>
-                </div>
-
-                <div class="text-center">
-                    <div class="w-16 h-16 mx-auto bg-gradient-to-br from-cyan-400 to-blue-600 rounded-2xl flex items-center justify-center mb-4">
-                        <i class="fas fa-code text-2xl text-white"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">MCP Protocol</h3>
-                    <p class="text-gray-400">Standard Model Context Protocol 2.0 implementation for broad compatibility.</p>
-                </div>
+        <div class="section">
+            <h2 class="section-title">Installation Commands</h2>
+            <div class="code-block">
+git clone https://github.com/openSVM/dflow-mcp.git
+cd dflow-mcp
+bun install
+bun run dev
             </div>
         </div>
-    </section>
 
-    <!-- CTA Section -->
-    <section class="py-20 hero-gradient">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold mb-6">
-                Ready to <span class="gradient-text">Connect?</span>
-            </h2>
-            <p class="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-                Get started with the DFlow MCP Server and unlock comprehensive prediction market data in your AI workflows.
-            </p>
-            
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://github.com/openSVM/dflow-mcp" target="_blank" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-lg font-semibold hover:from-cyan-600 hover:to-blue-700 transition transform hover:scale-105 inline-flex items-center">
-                    <i class="fab fa-github mr-2"></i>
-                    View Source Code
+        <div class="section">
+            <h2 class="section-title">Resources</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                <a href="https://github.com/openSVM/dflow-mcp" class="btn-secondary" style="display: block; text-align: center;">
+                    GitHub Repository
                 </a>
-                <button onclick="showInstallCommand()" class="px-8 py-3 glass-effect rounded-lg font-semibold hover:bg-gray-700 transition transform hover:scale-105">
-                    <i class="fas fa-download mr-2"></i>
-                    Install Locally
-                </button>
-            </div>
-
-            <div id="installCommand" class="hidden mt-6 max-w-2xl mx-auto">
-                <div class="code-block p-4 text-left">
-                    <code>git clone https://github.com/openSVM/dflow-mcp.git<br>
-cd dflow-mcp<br>
-bun install<br>
-bun run dev</code>
-                </div>
+                <a href="https://github.com/openSVM/dflow-mcp/blob/main/README.md" class="btn-secondary" style="display: block; text-align: center;">
+                    Documentation
+                </a>
+                <a href="https://github.com/openSVM/dflow-mcp/blob/main/llms_dflow.json" class="btn-secondary" style="display: block; text-align: center;">
+                    API Specification
+                </a>
+                <a href="https://opensvm.com" class="btn-secondary" style="display: block; text-align: center;">
+                    OpenSVM Platform
+                </a>
             </div>
         </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="border-t border-gray-800 py-12">
-        <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="flex items-center space-x-2 mb-4 md:mb-0">
-                    <div class="text-xl font-bold gradient-text">OpenSVM[ai]</div>
-                    <span class="text-gray-400">|</span>
-                    <span class="text-gray-300">DFlow MCP Server</span>
-                </div>
-                <div class="flex items-center space-x-6">
-                    <a href="https://github.com/openSVM/dflow-mcp" target="_blank" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-github text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-discord text-xl"></i>
-                    </a>
-                    <a href="#" class="text-gray-400 hover:text-white transition">
-                        <i class="fab fa-twitter text-xl"></i>
-                    </a>
-                </div>
+        <div class="footer">
+            <div style="margin-bottom: 16px;">
+                <span class="logo-text">
+                    OpenSVM<span class="logo-ai">[ai]</span>
+                </span>
+                <span style="margin: 0 12px; color: #888888;">|</span>
+                <span style="color: #888888;">DFlow MCP Server</span>
             </div>
-            <div class="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-                <p>Built with <span class="text-cyan-400">❤️</span> using Bun, TypeScript, and MCP Protocol</p>
-                <p class="mt-2 text-sm">© 2024 OpenSVM. All rights reserved.</p>
+            <div style="font-size: 13px; color: #666666;">
+                Built for SVM ecosystem. © 2024 OpenSVM.
             </div>
         </div>
-    </footer>
+    </div>
 
     <script>
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function showInstallCommand() {
-            const commandDiv = document.getElementById('installCommand');
-            commandDiv.classList.toggle('hidden');
-        }
-
-        // Add smooth scroll behavior
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add hover effects to cards
-            const cards = document.querySelectorAll('.tool-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                });
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                });
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
     </script>

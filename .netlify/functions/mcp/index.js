@@ -139,74 +139,74 @@ const SERVER_INFO = {
   }
 };
 
-// WebSocket message handlers - also used for HTTP
-const handlers = {
+// Claude Desktop specific handlers
+const claudeDesktopHandlers = {
+  connectMCPServer: async (request) => {
+    const [serverUrl, nullParam] = request.args;
+    
+    console.log(`CLAUDE DESKTOP: connectMCPServer`);
+    console.log(`URL: ${serverUrl}`);
+    console.log(`ID: ${request.id}`);
+    
+    // Return Claude Desktop expected format
+    const response = {
+      success: true,
+      connected: true,
+      name: SERVER_INFO.serverInfo.name,
+      version: SERVER_INFO.serverInfo.version,
+      description: SERVER_INFO.serverInfo.description,
+      capabilities: SERVER_INFO.capabilities,
+      tools: TOOLS.map(tool => ({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema
+      })),
+      server_url: serverUrl || "https://dflow.opensvm.com/api/mcp",
+      status: "connected",
+      timestamp: new Date().toISOString(),
+      transport: "claude_desktop_rpc",
+      prompts: [],
+      resources: [],
+      protocolVersion: SERVER_INFO.protocolVersion
+    };
+    
+    console.log(`CLAUDE RESPONSE: ${JSON.stringify(response, null, 2)}`);
+    
+    return response;
+  },
+
   getModels: async (request) => {
     return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: {
-        models: [
-          {
-            id: "dflow-prediction-markets",
-            name: "DFlow Prediction Markets",
-            description: "Access prediction market events, markets, trades, and live data",
-            provider: "dflow-mcp-server",
-            capabilities: ["tools", "text-generation"]
-          }
-        ]
-      }
-    };
-  },
-
-  connectMCPServer: async (request) => {
-    return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: {
-        name: SERVER_INFO.serverInfo.name,
-        version: SERVER_INFO.serverInfo.version,
-        description: SERVER_INFO.serverInfo.description,
-        capabilities: SERVER_INFO.capabilities,
-        tools: TOOLS.map(tool => ({
-          name: tool.name,
-          description: tool.description,
-          inputSchema: tool.inputSchema
-        })),
-        connected: true,
-        server_url: "https://dflow.opensvm.com/api/mcp",
-        status: "connected",
-        timestamp: new Date().toISOString(),
-        transport: "http_post_supported"
-      }
-    };
-  },
-
-  initialize: async (request) => {
-    return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: SERVER_INFO
+      success: true,
+      models: [
+        {
+          id: "dflow-prediction-markets",
+          name: "DFlow Prediction Markets",
+          description: "Access prediction market events, markets, trades, and live data",
+          provider: "dflow-mcp-server",
+          capabilities: ["tools", "text-generation"]
+        }
+      ]
     };
   },
 
   'tools/list': async (request) => {
     return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: {
-        tools: TOOLS
-      }
+      success: true,
+      tools: TOOLS
     };
   },
 
   'tools/call': async (request) => {
-    const { name, arguments: args } = request.params;
+    const [toolName, args] = request.args;
     const toolArgs = args || {};
+
+    console.log(`CLAUDE TOOL CALL: ${toolName}`);
+    console.log(`ARGS: ${JSON.stringify(toolArgs)}`);
 
     let result;
     try {
-      switch (name) {
+      switch (toolName) {
         case 'get_events':
           result = await apiRequest('GET', '/api/v1/events', toolArgs);
           break;
@@ -228,12 +228,11 @@ const handlers = {
           result = await apiRequest('GET', path);
           break;
         default:
-          throw new Error(`Unknown tool: ${name}`);
+          throw new Error(`Unknown tool: ${toolName}`);
       }
 
       return {
-        jsonrpc: "2.0",
-        id: request.id,
+        success: true,
         result: {
           content: [
             {
@@ -245,68 +244,43 @@ const handlers = {
       };
     } catch (error) {
       return {
-        jsonrpc: "2.0",
-        id: request.id,
-        error: {
-          code: -32603,
-          message: error.message,
-          data: {
-            tool: name,
-            arguments: toolArgs
-          }
+        success: false,
+        error: error.message,
+        data: {
+          tool: toolName,
+          arguments: toolArgs
         }
       };
     }
   },
 
-  'tools/describe': async (request) => {
-    const toolName = request.params.name;
-    const tool = TOOLS.find(t => t.name === toolName);
-    
-    if (!tool) {
-      return {
-        jsonrpc: "2.0",
-        id: request.id,
-        error: {
-          code: -32602,
-          message: `Tool not found: ${toolName}`
-        }
-      };
-    }
-
+  initialize: async (request) => {
     return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: tool
-    };
-  },
-
-  'server/info': async (request) => {
-    return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: SERVER_INFO
+      success: true,
+      ...SERVER_INFO
     };
   },
 
   health: async (request) => {
     return {
-      jsonrpc: "2.0",
-      id: request.id,
-      result: {
-        status: "healthy",
-        timestamp: new Date().toISOString(),
-        version: SERVER_INFO.serverInfo.version,
-        methods: Object.keys(handlers),
-        transport: "http_post_supported"
-      }
+      success: true,
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      version: SERVER_INFO.serverInfo.version,
+      methods: Object.keys(claudeDesktopHandlers),
+      transport: "claude_desktop_rpc",
+      tools_available: TOOLS.length
     };
   }
 };
 
-// Main request handler - supports both HTTP POST and WebSocket upgrade detection
+// Main request handler - Claude Desktop format
 exports.handler = async function(event, context) {
   const { httpMethod, body, headers, requestContext } = event;
+  const requestPath = requestContext.path || '';
+  
+  console.log(`MCP REQUEST: ${httpMethod} ${requestPath}`);
+  console.log(`MCP BODY RAW: ${body}`);
 
   // Handle OPTIONS for CORS
   if (httpMethod === 'OPTIONS') {
@@ -321,32 +295,6 @@ exports.handler = async function(event, context) {
     };
   }
 
-  // Handle WebSocket upgrade requests (inform about HTTP POST support)
-  if (httpMethod === 'GET' && headers.upgrade?.toLowerCase() === 'websocket') {
-    console.log('MCP WS: WebSocket upgrade requested');
-    
-    return {
-      statusCode: 400,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: null,
-        error: {
-          code: -32000,
-          message: 'WebSocket upgrade not supported in Netlify Functions. Use HTTP POST transport instead.',
-          data: {
-            transport: 'http_post',
-            endpoint: 'https://dflow.opensvm.com/api/mcp',
-            claude_desktop_config: 'Claude Desktop may need to be configured for HTTP transport'
-          }
-        }
-      })
-    };
-  }
-
   // Handle only POST requests for MCP
   if (httpMethod !== 'POST') {
     return {
@@ -356,18 +304,33 @@ exports.handler = async function(event, context) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: null,
-        error: {
-          code: -32600,
-          message: 'Method not allowed'
-        }
+        success: false,
+        error: 'Method not allowed'
       })
     };
   }
 
   try {
-    const request = JSON.parse(body);
+    let request;
+    
+    // Parse request
+    try {
+      request = JSON.parse(body);
+      console.log(`MCP PARSED: ${JSON.stringify(request, null, 2)}`);
+    } catch (parseError) {
+      console.log(`MCP PARSE ERROR: ${parseError.message}`);
+      return {
+        statusCode: 400,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          success: false,
+          error: 'Invalid JSON format'
+        })
+      };
+    }
 
     // Add CORS headers to all responses
     const responseHeaders = {
@@ -377,53 +340,65 @@ exports.handler = async function(event, context) {
       'Content-Type': 'application/json'
     };
 
-    console.log(`MCP HTTP: ${request.method} request`);
-
-    // Handle HTTP POST requests using unified handlers
-    if (handlers[request.method]) {
-      const response = await handlers[request.method](request);
-      return {
-        statusCode: 200,
-        headers: responseHeaders,
-        body: JSON.stringify(response)
-      };
+    // Check if this is Claude Desktop format (has 'args' array)
+    if (request.args && Array.isArray(request.args) && request.method && request.type === 'rpc') {
+      console.log(`MCP CLAUDE DESKTOP FORMAT: ${request.method}`);
+      
+      const methodName = request.method;
+      if (claudeDesktopHandlers[methodName]) {
+        const response = await claudeDesktopHandlers[methodName](request);
+        
+        console.log(`MCP CLAUDE RESPONSE: ${JSON.stringify(response, null, 2)}`);
+        
+        return {
+          statusCode: 200,
+          headers: responseHeaders,
+          body: JSON.stringify(response)
+        };
+      }
     }
 
-    // Method not found
+    // Method not found - provide helpful error
+    const errorResponse = {
+      success: false,
+      error: 'Method not found',
+      data: {
+        available_methods: Object.keys(claudeDesktopHandlers),
+        request_detected: request.args ? 'claude_desktop' : 'unknown',
+        formats_supported: ['claude_desktop_rpc'],
+        claude_desktop_example: {
+          args: ['https://dflow.opensvm.com/api/mcp', null],
+          id: 'request_id',
+          method: 'connectMCPServer',
+          type: 'rpc'
+        }
+      }
+    };
+    
+    console.log(`MCP ERROR RESPONSE: ${JSON.stringify(errorResponse, null, 2)}`);
+    
     return {
       statusCode: 200,
       headers: responseHeaders,
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: request.id,
-        error: {
-          code: -32601,
-          message: 'Method not found',
-          data: {
-            available_methods: Object.keys(handlers),
-            transport: 'http_post_supported',
-            claude_desktop_note: 'Claude Desktop may need to be configured for HTTP transport'
-          }
-        }
-      })
+      body: JSON.stringify(errorResponse)
     };
 
   } catch (error) {
+    const errorResponse = {
+      success: false,
+      error: 'Internal error',
+      data: error.message
+    };
+    
+    console.log(`MCP INTERNAL ERROR: ${JSON.stringify(errorResponse, null, 2)}`);
+    
     return {
-      statusCode: 200,
+      statusCode: 500,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: null,
-        error: {
-          code: -32700,
-          message: 'Parse error or internal error',
-          data: error.message
-        }
-      })
+      body: JSON.stringify(errorResponse)
     };
   }
 };

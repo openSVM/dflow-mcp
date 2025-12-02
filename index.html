@@ -786,12 +786,17 @@
                 Access <span class="kalshi-accent" style="font-weight: 600;">Kalshi's</span> regulated prediction market data through <span class="dflow-accent" style="font-weight: 600;">DFlow's</span> API. Built for Claude Desktop and MCP clients.
             </p>
 
+            <div style="background: rgba(0, 255, 0, 0.05); border: 1px solid rgba(0, 255, 0, 0.2); padding: 16px; margin: 24px auto; max-width: 600px; border-radius: 4px;">
+                <div style="font-size: 13px; color: #888888; margin-bottom: 8px;">⚡ HOSTED WEB MCP • ZERO SETUP</div>
+                <div style="font-family: monospace; color: #00ff00; font-size: 14px;">https://dflow.opensvm.com/api/mcp</div>
+            </div>
+
             <div style="margin: 32px 0;">
                 <a href="https://github.com/openSVM/dflow-mcp" class="btn-primary" style="margin-right: 12px;">
                     View Source Code
                 </a>
                 <a href="https://smithery.ai/server/dflow-mcp-server" class="btn-secondary">
-                    Install via Smithery
+                    Browse on Smithery
                 </a>
             </div>
         </div>
@@ -800,14 +805,40 @@
             <h2>Quick Start <span class="badge">EASY SETUP</span></h2>
 
             <div class="install-tabs">
-                <button class="install-tab active" onclick="showInstall('smithery')">Smithery (Recommended)</button>
-                <button class="install-tab" onclick="showInstall('manual')">Manual Installation</button>
-                <button class="install-tab" onclick="showInstall('config')">Claude Desktop Config</button>
+                <button class="install-tab active" onclick="showInstall('hosted')">🌐 Hosted (Instant)</button>
+                <button class="install-tab" onclick="showInstall('smithery')">Smithery</button>
+                <button class="install-tab" onclick="showInstall('manual')">Manual Install</button>
+                <button class="install-tab" onclick="showInstall('config')">Config Only</button>
             </div>
 
-            <div id="install-smithery" class="install-content active">
+            <div id="install-hosted" class="install-content active">
+                <p style="text-align: center; color: #888888; margin-bottom: 16px;">
+                    ⚡ <strong style="color: #00ff00;">Already deployed and ready to use!</strong> No installation needed.
+                </p>
+                <div style="background: rgba(0, 255, 0, 0.1); border: 1px solid rgba(0, 255, 0, 0.3); padding: 20px; margin-bottom: 24px; text-align: center;">
+                    <div style="color: #888888; font-size: 12px; margin-bottom: 8px;">WEB MCP ENDPOINT</div>
+                    <div style="color: #00ff00; font-size: 18px; font-weight: 600; font-family: monospace;">
+                        https://dflow.opensvm.com/api/mcp
+                    </div>
+                    <div style="color: #888888; font-size: 12px; margin-top: 8px;">Use this URL directly in any MCP client that supports HTTP endpoints</div>
+                </div>
+                <div class="code-block">
+{
+  "mcpServers": {
+    "dflow-mcp": {
+      "url": "https://dflow.opensvm.com/api/mcp"
+    }
+  }
+}
+                </div>
+                <p style="text-align: center; color: #888888; font-size: 13px; margin-top: 16px;">
+                    Zero setup required • Production-ready • Always online • Try the playground below!
+                </p>
+            </div>
+
+            <div id="install-smithery" class="install-content">
                 <p style="text-align: center; color: #888888; margin-bottom: 24px;">
-                    The easiest way to install this MCP server. One command and you're ready to go!
+                    Install locally via Smithery for offline usage
                 </p>
                 <div class="code-block">
 npx @smithery/cli install dflow-mcp-server --client claude
@@ -819,7 +850,7 @@ npx @smithery/cli install dflow-mcp-server --client claude
 
             <div id="install-manual" class="install-content">
                 <p style="text-align: center; color: #888888; margin-bottom: 24px;">
-                    Clone the repository and install dependencies manually.
+                    Clone the repository and run locally for development
                 </p>
                 <div class="code-block">
 git clone https://github.com/openSVM/dflow-mcp.git
@@ -827,11 +858,14 @@ cd dflow-mcp
 bun install
 bun run dev
                 </div>
+                <p style="text-align: center; color: #888888; font-size: 13px; margin-top: 16px;">
+                    For local development and testing. Or just use the hosted version above!
+                </p>
             </div>
 
             <div id="install-config" class="install-content">
                 <p style="text-align: center; color: #888888; margin-bottom: 24px;">
-                    Add this configuration to your Claude Desktop config file.
+                    Manual stdio configuration (if you prefer local over hosted)
                 </p>
                 <div class="code-block">
 {
@@ -844,7 +878,7 @@ bun run dev
 }
                 </div>
                 <p style="text-align: center; color: #888888; font-size: 13px; margin-top: 16px;">
-                    Replace <code style="color: #00ff00;">/path/to/dflow-mcp</code> with your actual installation path.
+                    Replace <code style="color: #00ff00;">/path/to/dflow-mcp</code> with your actual installation path. But seriously, just use the hosted endpoint!
                 </p>
             </div>
         </div>
@@ -1010,10 +1044,12 @@ bun run dev
         </div>
 
         <div class="playground">
-            <h2>🛠️ MCP API Playground</h2>
-            
-            <div class="endpoint-info">
-                <strong>API Endpoint:</strong> <code>https://dflow.opensvm.com/api/mcp</code>
+            <h2>🛠️ Live MCP API Playground</h2>
+
+            <div class="endpoint-info" style="background: rgba(0, 255, 0, 0.05); border-color: rgba(0, 255, 0, 0.3);">
+                <div style="margin-bottom: 8px;">⚡ <strong>Hosted Web MCP Endpoint</strong> (use this URL in your MCP clients)</div>
+                <code style="font-size: 15px;">https://dflow.opensvm.com/api/mcp</code>
+                <div style="margin-top: 8px; font-size: 12px; color: #888888;">Test the live API below or use this endpoint directly in Claude Desktop, Cursor, or any MCP client</div>
             </div>
 
             <div class="tool-selector">

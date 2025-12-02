@@ -1131,6 +1131,109 @@
             color: #10B981;
             font-family: monospace;
         }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 32px;
+            color: #666666;
+            font-size: 14px;
+        }
+
+        .empty-state-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* Keyboard hint */
+        .kbd {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-family: monospace;
+            margin-left: 8px;
+            color: #888888;
+        }
+
+        /* Smooth page transitions */
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        /* Focus styles for accessibility */
+        button:focus-visible,
+        input:focus-visible,
+        a:focus-visible {
+            outline: 2px solid #10B981;
+            outline-offset: 2px;
+        }
+
+        /* Better scrollbar for modal */
+        .tools-modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tools-modal-content::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .tools-modal-content::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.3);
+            border-radius: 4px;
+        }
+
+        .tools-modal-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -1483,12 +1586,12 @@ bun run dev
     <!-- Tools Modal -->
     <div class="tools-modal" id="toolsModal" onclick="if(event.target === this) toggleToolsModal()">
         <div class="tools-modal-content">
-            <button class="tools-modal-close" onclick="toggleToolsModal()">×</button>
-            <h2 style="font-size: 28px; font-weight: 600; margin: 0 0 16px 0; padding-right: 40px;">Available Tools</h2>
+            <button class="tools-modal-close" onclick="toggleToolsModal()" title="Close (ESC)">×</button>
+            <h2 style="font-size: 28px; font-weight: 600; margin: 0 0 16px 0; padding-right: 40px;">Available Tools <span class="kbd">ESC to close</span></h2>
             <p style="color: #888888; margin-bottom: 24px;">
                 Comprehensive access to prediction market data through 24 specialized tools across 8 categories.
             </p>
-            <input type="text" class="tools-search" id="toolsSearch" placeholder="Search tools..." oninput="searchTools()">
+            <input type="text" class="tools-search" id="toolsSearch" placeholder="Search tools... (e.g. events, markets, trades)" oninput="searchTools()">
 
             <div class="tools-grid" id="toolsGrid">
                 <div class="tool-card" data-name="get_events" data-description="paginated list prediction market events filtering">
@@ -1591,23 +1694,51 @@ bun run dev
         </div>
     </div>
 
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
     <script>
         let currentTool = 'tools.list';
         let requestId = 1;
+
+        // Toast notification system
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = isError ? 'toast error show' : 'toast show';
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
 
         function toggleToolsModal() {
             const modal = document.getElementById('toolsModal');
             modal.classList.toggle('active');
             if (modal.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
+                // Focus search input when modal opens
+                setTimeout(() => document.getElementById('toolsSearch').focus(), 100);
             } else {
                 document.body.style.overflow = 'auto';
             }
         }
 
+        // Keyboard support
+        document.addEventListener('keydown', (e) => {
+            // ESC to close modal
+            if (e.key === 'Escape') {
+                const modal = document.getElementById('toolsModal');
+                if (modal.classList.contains('active')) {
+                    toggleToolsModal();
+                }
+            }
+        });
+
         function searchTools() {
             const searchTerm = document.getElementById('toolsSearch').value.toLowerCase();
             const toolCards = document.querySelectorAll('.tool-card');
+            let visibleCount = 0;
 
             toolCards.forEach(card => {
                 const name = card.getAttribute('data-name').toLowerCase();
@@ -1615,10 +1746,26 @@ bun run dev
 
                 if (name.includes(searchTerm) || description.includes(searchTerm)) {
                     card.style.display = 'block';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+
+            // Show empty state if no results
+            const grid = document.getElementById('toolsGrid');
+            let emptyState = grid.querySelector('.empty-state');
+            if (visibleCount === 0 && searchTerm) {
+                if (!emptyState) {
+                    emptyState = document.createElement('div');
+                    emptyState.className = 'empty-state';
+                    emptyState.innerHTML = '<div class="empty-state-icon">🔍</div>No tools match your search';
+                    grid.appendChild(emptyState);
+                }
+                emptyState.style.display = 'block';
+            } else if (emptyState) {
+                emptyState.style.display = 'none';
+            }
         }
 
         function showInstall(tab) {
@@ -1687,12 +1834,9 @@ bun run dev
 
         function copyCurl() {
             navigator.clipboard.writeText(currentCurlCommand).then(() => {
-                const btn = document.getElementById('copy-curl-btn');
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Copied!';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                }, 2000);
+                showToast('cURL command copied to clipboard');
+            }).catch(() => {
+                showToast('Failed to copy to clipboard', true);
             });
         }
 
@@ -1701,9 +1845,13 @@ bun run dev
             const curlDiv = document.getElementById('curl-command');
             const copyCurlBtn = document.getElementById('copy-curl-btn');
             const callButtons = document.querySelectorAll('.call-btn');
+            const activeBtn = document.querySelector('.tool-params.active .call-btn');
 
-            // Disable buttons and show loading
+            // Disable buttons and show loading with spinner
             callButtons.forEach(btn => btn.disabled = true);
+            if (activeBtn) {
+                activeBtn.innerHTML = '<span class="loading-spinner"></span>Loading...';
+            }
             setLoading();
 
             let requestData, url;
@@ -1774,27 +1922,37 @@ bun run dev
                 }
 
             } catch (error) {
-                const errorData = await response.json().catch(() => null);
-                let errorMessage = `Error: ${error.message}`;
+                let errorMessage = error.message || 'An unexpected error occurred';
 
-                if (errorData && errorData.error) {
-                    errorMessage += `\n\nMCP Error ${errorData.error.code}: ${errorData.error.message}`;
+                // Try to get more details from response
+                try {
+                    if (typeof response !== 'undefined') {
+                        const errorData = await response.json().catch(() => null);
+                        if (errorData && errorData.error) {
+                            errorMessage = `MCP Error: ${errorData.error.message}`;
 
-                    if (errorData.error.message.includes('fetch failed')) {
-                        errorMessage += '\n\nNote: The external API (api.llm.dflow.org) may be temporarily unavailable.';
-                        errorMessage += '\nThe MCP server itself is working correctly.';
-                        errorMessage += '\nYou can test with "List Tools" which doesn\'t require external API access.';
+                            if (errorData.error.message.includes('fetch failed')) {
+                                errorMessage += '\n\nThe external API may be temporarily unavailable. Try "List Tools" to verify the MCP server is working.';
+                            }
+                        }
                     }
+                } catch (e) {
+                    // Ignore parse errors
                 }
 
-                responseDiv.textContent = errorMessage;
+                responseDiv.innerHTML = `<div style="color: #ef4444; padding: 16px;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Request Failed</div>
+                    <div style="font-size: 13px; opacity: 0.9;">${errorMessage}</div>
+                </div>`;
                 responseDiv.classList.add('error');
                 responseDiv.classList.add('active');
                 setError();
+                showToast('API request failed', true);
             }
 
-            // Re-enable buttons
+            // Re-enable buttons and restore button text
             callButtons.forEach(btn => btn.disabled = false);
+            restoreButtonLabels();
 
             // Reset status after 2 seconds
             setTimeout(() => {
@@ -1802,13 +1960,33 @@ bun run dev
             }, 2000);
         }
 
+        function restoreButtonLabels() {
+            const labels = {
+                'tools.list': 'Call API',
+                'get_events': 'Get Events',
+                'get_markets': 'Get Markets',
+                'get_trades': 'Get Trades'
+            };
+
+            document.querySelectorAll('.tool-params').forEach(section => {
+                const btn = section.querySelector('.call-btn');
+                const id = section.id;
+                if (btn && labels[id]) {
+                    btn.innerHTML = `<span class="status-indicator idle" id="status"></span>${labels[id]}`;
+                }
+            });
+        }
+
         function copyFile(filename) {
-            const content = fetch(filename)
+            fetch(filename)
                 .then(response => response.text())
                 .then(text => {
                     navigator.clipboard.writeText(text).then(() => {
-                        alert(`Copied ${filename} to clipboard!`);
+                        showToast(`${filename} copied to clipboard`);
                     });
+                })
+                .catch(() => {
+                    showToast(`Failed to copy ${filename}`, true);
                 });
         }
 
@@ -1817,9 +1995,9 @@ bun run dev
         function copyResponse() {
             if (lastResponseData) {
                 navigator.clipboard.writeText(JSON.stringify(lastResponseData, null, 2)).then(() => {
-                    const btn = document.querySelector('.copy-btn');
-                    btn.textContent = '✅ Copied!';
-                    setTimeout(() => btn.textContent = 'Copy Response', 2000);
+                    showToast('Response copied to clipboard');
+                }).catch(() => {
+                    showToast('Failed to copy response', true);
                 });
             }
         }
